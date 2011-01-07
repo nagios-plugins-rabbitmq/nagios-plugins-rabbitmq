@@ -1,0 +1,23 @@
+---
+name: nagios-plugins-rabbitmq
+version: 1.0.0
+author:
+  - James Casey (jamesc.000@gmail.com)
+abstract: Nagios checks for RabbitMQ using the management interface
+license: apache
+resources:
+  license: http://apache.org/licenses/LICENSE-2.0
+requires:
+  Getopt::Long: 0
+  JSON: 2.12
+  LWP::UserAgent: 0
+  Pod::Usage: 0
+  URI: 1.35
+build_requires:
+  Module::Build: 0
+recommends:
+  Nagios::Plugin: 0.27
+generated_by: Module::Build version 0.2807
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

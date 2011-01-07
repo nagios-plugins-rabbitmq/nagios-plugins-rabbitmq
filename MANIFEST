@@ -1,0 +1,7 @@
+Build.pl
+LICENSE.txt
+MANIFEST			This list of files
+README.md
+scripts/check_rabbitmq_aliveness
+scripts/check_rabbitmq_server
+META.yml
