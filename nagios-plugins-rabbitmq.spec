@@ -27,21 +27,20 @@ Nagios checks for RabbitMQ messaging server.
 These use the RabbitMQ management interface for gathering various
 information about the server
 
+
 %prep
 %setup -q
 
 
 %build
-# Remove OPTIMIZE=... from noarch packages (unneeded)
-%{__perl} Build.pl --installdirs=vendor OPTIMIZE="$RPM_OPT_FLAGS"
-Build 
+%{__perl} Build.pl --installdirs=vendor
+Build
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
 Build pure_install --destdir=$RPM_BUILD_ROOT
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
-# Remove the next line from noarch packages (unneeded)
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
 %{_fixperms} $RPM_BUILD_ROOT/*
 
