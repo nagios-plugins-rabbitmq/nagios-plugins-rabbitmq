@@ -1,11 +1,11 @@
 Name:           nagios-plugins-rabbitmq
-Version:        1.0
+Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Nagios checks for RabbitMQ
 
-Group:          Development/Libraries
-License:        APL2
-URL:            https://github.com/jamesc/nagios-plugins-rabbitmq
+Group:          Applications/System
+License:        ASL 2.0
+URL:            http://github.com/jamesc/nagios-plugins-rabbitmq
 Source0:        nagios-plugins-rabbitmq-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -13,6 +13,10 @@ BuildArch:     noarch
 # Correct for lots of packages, other common choices include eg. Module::Build
 BuildRequires:  perl(Module::Build)
 Requires:  perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+Requires: perl(JSON)
+Requires: perl(Nagios::Plugins)
+Requires: perl(LWP)
+Requires: perl(URI)
 
 %{?perl_default_filter}
 
@@ -28,8 +32,8 @@ information about the server
 
 %build
 # Remove OPTIMIZE=... from noarch packages (unneeded)
-%{__perl} Build.PL --installdirs=vendor OPTIMIZE="$RPM_OPT_FLAGS"
-Build %{?_smp_mflags}
+%{__perl} Build.pl --installdirs=vendor OPTIMIZE="$RPM_OPT_FLAGS"
+Build 
 
 
 %install
@@ -42,7 +46,7 @@ find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
 
 
 %check
-make test
+Build test
 
 
 %clean
@@ -51,9 +55,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc LICENCE.txt README.md
-%{bindir}/*
+%doc LICENSE.txt README.md
+%{_bindir}/*
 %{_mandir}/man1/*.1*
 
 
 %changelog
+* Sun Jan 09 2010 James Casey <jamesc.000@gmail.com> 1.0.0-1
+- Initial version
+
