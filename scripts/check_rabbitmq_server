@@ -32,7 +32,7 @@ $PROGNAME = basename($0);
 
 # Instantiate Nagios::Plugin object (the 'usage' parameter is mandatory)
 my $p = Nagios::Plugin->new(
-    usage => "Usage: %s OPTIONS",
+    usage => "Usage: %s [options] -H hostname",
     license => "",
     version => $VERSION,
     blurb => 'This plugin uses the RabbitMQ management node API to check server process parameters.',
@@ -152,7 +152,137 @@ sub structured {
     my $content = shift;
     $Data::Dumper::Terse = 1;          # don't output names where feasible
     $Data::Dumper::Indent = 2;
-
     return Dumper($content);
-
 }
+
+=head1 NAME
+
+check_rabbitmq_server - Nagios plugin using RabbitMQ management API to
+check the server resource usage (processes, memory and file descriptors)
+
+=head1 SYNOPSIS
+
+check_rabbitmq_server [options] -H hostname
+
+=head1 DESCRIPTION
+
+Use the management interface of RabbitMQ to check the resource usage of the
+server.  This check looks at the node statistics for the rabbit node on
+the host and examines the erlang memory, process and file descriptor usage.
+
+It provides performance data for each of these variables and allows for
+warning and criticality levels to be specified for each.
+
+It uses Nagios::Plugin and accepts all standard Nagios options.
+
+=head1 OPTIONS
+
+=over
+
+=item -h | --help
+
+Display help text
+
+=item -v | --verbose
+
+Verbose output
+
+=item -t | --timeout
+
+Set a timeout for the check in seconds
+
+=item -H | --host
+
+The host to connect to
+
+=item --port
+
+The port to connect to (default: 55672)
+
+=item -w | --warning
+
+The warning levels, expressed as a percentage for each of memory, process
+and file descriptor usage.  This field consists of three comma-separated
+integers.  (default: 90,90,90)
+
+=item -c | --critical
+
+The critical levels, expressed as a percentage for each of memory, process
+and file descriptor usage.  This field consists of three comma-separated
+integers.  (default: 90,90,90)
+
+=item --user
+
+The user to connect as (default: guest)
+
+=item --pass
+
+The password for the user (default: guest)
+
+=back
+
+=head1 EXAMPLES
+
+The defaults all work with a standard fresh install of RabbitMQ, and all that
+is needed is to specify the host to connect to:
+
+    check_rabbitmq_server -H rabbit.example.com
+
+This returns a standard Nagios result:
+
+    RABBITMQ_SERVER OK - Memory OK (6.19%) Process OK (0.01%)
+        FD OK (2.53%) | Memory=6.19%;80;90 Process=0.01%;80;90 FD=2.53%;80;90
+
+You can specify different warning and criticality levels.  B<-w> and B<-c>
+both accept three comma-separated percentages which represent the
+thresholds for memory, process and file descriptor usage respectively.  For
+example, to specify warnings for memory at 60%, process at 80% and file
+descriptors at 95%:
+
+    check_rabbitmq_server -H rabbit.example.com  -w 60,80,95
+
+=head1 ERRORS
+
+The check tries to provide useful error messages on the status line for
+standard error conditions.
+
+Otherwise it returns the HTTP Error message returned by the management
+interface.
+
+=head1 EXIT STATUS
+
+Returns zero if check is OK otherwise returns standard Nagios exit codes to
+signify WARNING, UNKNOWN or CRITICAL state.
+
+=head1 SEE ALSO
+
+See Nagios::Plugin(3)
+
+The RabbitMQ management plugin is described at
+http://www.rabbitmq.com/management.html
+
+=head1 LICENSE
+
+This file is part of nagios-plugins-rabbitmq.
+
+Copyright 2010, Platform 14.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+=head1 AUTHOR
+
+James Casey <jamesc.000@gmail.com>
+
+=cut
+
+1;
