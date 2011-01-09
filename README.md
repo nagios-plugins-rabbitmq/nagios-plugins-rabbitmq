@@ -4,8 +4,8 @@ nagios-plugins-rabbitmq
 Overview
 --------
 This package contains a set of nagios checks useful for monitoring a
-RabbitMQ server.  They use the RabbitMQ management interface with is over
-HTTP and therefore have a very light profile on the nagios server.
+RabbitMQ server.  They use the RabbitMQ management interface which is JSON
+over HTTP and therefore have a very light profile on the nagios server.
 
 See the [documentation](http://www.rabbitmq.com/management.html) on the
 RabbitMQ management interface for more details on what it provides.
