@@ -38,3 +38,4 @@
 \B\._
 # Avoid archives of this distribution
 \bnagios-plugins-rabbitmq-[\d\.\_]+
+^MYMETA.yml$
