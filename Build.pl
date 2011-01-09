@@ -5,7 +5,6 @@ my $build = Module::Build->new
   (
    dist_name => "nagios-plugins-rabbitmq",
    dist_version => "1.0.0",
-   #dist_version_from => "lib/JMX/Jmx4Perl.pm",
    dist_author => 'James Casey (jamesc.000@gmail.com)',
    dist_abstract => 'Nagios checks for RabbitMQ using the management interface',
    installdirs => 'site',
@@ -25,7 +24,7 @@ my $build = Module::Build->new
    build_requires => {
                       "Module::Build" => 0,
                      },                       
-   keywords => [  "JMX", "JEE", "Management", "Nagios" ],
+   keywords => [  "RabbitMQ", "Management", "Nagios" ],
   );
 
 $build->create_build_script;

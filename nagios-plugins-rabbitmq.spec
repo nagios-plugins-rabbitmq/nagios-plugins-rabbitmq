@@ -15,8 +15,9 @@ BuildRequires:  perl(Module::Build)
 Requires:  perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 Requires: perl(JSON)
 Requires: perl(Nagios::Plugins)
-Requires: perl(LWP)
-Requires: perl(URI)
+Requires: perl(LWP::UserAgent)
+Requires: perl(Getopt::Long)
+Requires: perl(Pod::Usage)
 
 %{?perl_default_filter}
 
