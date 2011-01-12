@@ -10,7 +10,7 @@ my $build = Module::Build->new
    installdirs => 'site',
    script_files => 'scripts',
    license => 'apache',
-   
+
    requires => {
                 "JSON" => "2.12",
                 "LWP::UserAgent" => 0,
@@ -23,7 +23,7 @@ my $build = Module::Build->new
                   },
    build_requires => {
                       "Module::Build" => 0,
-                     },                       
+                     },
    keywords => [  "RabbitMQ", "Management", "Nagios" ],
   );
 

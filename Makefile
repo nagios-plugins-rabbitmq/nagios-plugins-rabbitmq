@@ -6,5 +6,5 @@ build:
 
 clean: build
 	Build distclean
-	@rm nagios-plugins-rabbitmq-*.tar.gz
+	@rm -f nagios-plugins-rabbitmq-*.tar.gz RabbitMQ-API-*.tar.gz
 
