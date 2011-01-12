@@ -23,7 +23,7 @@ Currently we have 3 checks:
 
 - check\_rabbitmq\_objects
   - Use a variety of APIs to count instances of various objects on the
-    server.  These include vhosts, exchanbges, bindings, queues and 
+    server.  These include vhosts, exchanges, bindings, queues and 
     channels.
 
 See the relevant POD documentation/man pages for more information on usage.
