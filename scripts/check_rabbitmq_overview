@@ -149,7 +149,7 @@ sub request {
 =head1 NAME
 
 check_rabbitmq_overview - Nagios plugin using RabbitMQ management API to
-count the number of various broker objects
+count the messages pending on the broker
 
 =head1 SYNOPSIS
 
@@ -157,24 +157,11 @@ check_rabbitmq_overview [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to count the number of various
-broker objects.  These are published as performance metrics for the check.
+Use the management interface of RabbitMQ to count the number of pending,
+ready and unacknowledged messages.  These are published as performance
+metrics for the check.
 
-Currently the following objects are counted:
-
-=over
-
-=item * vhost
-
-=item * exchange
-
-=item * binding
-
-=item * queue
-
-=item * channel
-
-=back
+Critical and warning thresholds can be set for each of the metrics.
 
 It uses Nagios::Plugin and accepts all standard Nagios options.
 
@@ -210,6 +197,18 @@ The user to connect as (default: guest)
 
 The password for the user (default: guest)
 
+=item -w | --warning
+
+The warning levels for each count of messages, messages_ready and
+messages_unacknowledged.  This field consists of three comma-separated
+integers.  Specify -1 if no threshold for a particular count.
+
+=item -c | --critical
+
+The critical levels for each count of messages, messages_ready and
+messages_unacknowledged.  This field consists of three comma-separated
+integers.  Specify -1 if no threshold for a particular count
+
 =back
 
 =head1 EXAMPLES
@@ -221,8 +220,9 @@ is needed is to specify the host to connect to:
 
 This returns a standard Nagios result:
 
-    RABBITMQ_OBJECTS OK - Gathered Object Counts | vhost=1;; exchange=7;;
-      binding=2;; queue=1;; channel=0;;
+    RABBITMQ_OVERVIEW OK - messages OK (25794) messages_ready OK (22971)
+      messages_unacknowledged OK (2823) | messages=25794;;
+      messages_ready=22971;; messages_unacknowledged=2823;;
 
 =head1 ERRORS
 

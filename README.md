@@ -23,11 +23,11 @@ Currently we have 4 checks:
 
 - check\_rabbitmq\_objects
   - Use a variety of APIs to count instances of various objects on the
-    server.  These include vhosts, exchanges, bindings, queues and 
+    server.  These include vhosts, exchanges, bindings, queues and
     channels.
 
 - check\_rabbitmq\_overview
-  - Use the `/api/overview` API to collect the numver of pending, ready 
+  - Use the `/api/overview` API to collect the number of pending, ready
     and unacknowledged messages on the server
 
 See the relevant POD documentation/man pages for more information on usage.
