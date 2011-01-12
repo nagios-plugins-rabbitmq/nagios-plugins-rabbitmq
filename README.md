@@ -12,7 +12,7 @@ RabbitMQ management interface for more details on what it provides.
 
 Status
 ------
-Currently we have 3 checks:
+Currently we have 4 checks:
 
 - check\_rabbitmq\_aliveness
   - Use the `/api/aliveness-test` API to send/receive a message.
@@ -25,6 +25,10 @@ Currently we have 3 checks:
   - Use a variety of APIs to count instances of various objects on the
     server.  These include vhosts, exchanges, bindings, queues and 
     channels.
+
+- check\_rabbitmq\_overview
+  - Use the `/api/overview` API to collect the numver of pending, ready 
+    and unacknowledged messages on the server
 
 See the relevant POD documentation/man pages for more information on usage.
 
