@@ -1,6 +1,6 @@
 ---
 name: nagios-plugins-rabbitmq
-version: 1.0.0
+version: 1.0.1
 author:
   - James Casey (jamesc.000@gmail.com)
 abstract: Nagios checks for RabbitMQ using the management interface

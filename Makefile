@@ -2,7 +2,7 @@ sources: build
 	Build dist
 
 build: 
-	perl Build.pl
+	perl Build.PL
 
 clean: build
 	Build distclean
