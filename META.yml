@@ -1,23 +1,26 @@
 ---
-name: nagios-plugins-rabbitmq
-version: 1.0.1
+abstract: 'Nagios checks for RabbitMQ using the management interface'
 author:
-  - James Casey (jamesc.000@gmail.com)
-abstract: Nagios checks for RabbitMQ using the management interface
+  - 'James Casey (jamesc.000@gmail.com)'
+build_requires:
+  Module::Build: 0
+configure_requires:
+  Module::Build: 0
+dynamic_config: 1
+generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.110930'
 license: apache
-resources:
-  license: http://apache.org/licenses/LICENSE-2.0
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: nagios-plugins-rabbitmq
+recommends:
+  Nagios::Plugin: 0.27
 requires:
   Getopt::Long: 0
   JSON: 2.12
   LWP::UserAgent: 0
   Pod::Usage: 0
   URI: 1.35
-build_requires:
-  Module::Build: 0
-recommends:
-  Nagios::Plugin: 0.27
-generated_by: Module::Build version 0.2807
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+resources:
+  license: http://apache.org/licenses/LICENSE-2.0
+version: v1.0.2

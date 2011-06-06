@@ -1,0 +1,47 @@
+{
+   "abstract" : "Nagios checks for RabbitMQ using the management interface",
+   "author" : [
+      "James Casey (jamesc.000@gmail.com)"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930",
+   "license" : [
+      "apache_2_0"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "nagios-plugins-rabbitmq",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : 0
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : 0
+         }
+      },
+      "runtime" : {
+         "recommends" : {
+            "Nagios::Plugin" : "0.27"
+         },
+         "requires" : {
+            "Getopt::Long" : 0,
+            "JSON" : "2.12",
+            "LWP::UserAgent" : 0,
+            "Pod::Usage" : 0,
+            "URI" : "1.35"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://apache.org/licenses/LICENSE-2.0"
+      ]
+   },
+   "version" : "v1.0.2"
+}
