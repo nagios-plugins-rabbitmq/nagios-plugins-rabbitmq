@@ -4,7 +4,7 @@ use Module::Build;
 my $build = Module::Build->new
   (
    dist_name => "nagios-plugins-rabbitmq",
-   dist_version => "1.0.1",
+   dist_version => "1.0.2",
    dist_author => 'James Casey (jamesc.000@gmail.com)',
    dist_abstract => 'Nagios checks for RabbitMQ using the management interface',
    installdirs => 'site',
@@ -21,6 +21,9 @@ my $build = Module::Build->new
    recommends => {
                    "Nagios::Plugin" => "0.27",
                   },
+   configure_requires => {
+                      "Module::Build" => 0,
+                     },
    build_requires => {
                       "Module::Build" => 0,
                      },

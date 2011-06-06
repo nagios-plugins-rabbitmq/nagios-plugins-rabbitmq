@@ -1,5 +1,5 @@
 Name:           nagios-plugins-rabbitmq
-Version:        1.0.1
+Version:        1.0.2
 Release:        1%{?dist}
 Summary:        Nagios checks for RabbitMQ
 
@@ -61,8 +61,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Wed Jan 12 2010 James Casey <jamesc.000@gmail.com> 1.0.1-1
+* Mon Jun 06 2011 James Casey <jamesc.000@gmail.com> 1.0.2-1
+- Build fixes
+* Wed Jan 12 2011 James Casey <jamesc.000@gmail.com> 1.0.1-1
 - Add more checks
-* Sun Jan 09 2010 James Casey <jamesc.000@gmail.com> 1.0.0-1
+* Sun Jan 09 2011 James Casey <jamesc.000@gmail.com> 1.0.0-1
 - Initial version
 
