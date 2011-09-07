@@ -1,5 +1,5 @@
 Name:           nagios-plugins-rabbitmq
-Version:        1.0.2
+Version:        1.0.3
 Release:        1%{?dist}
 Summary:        Nagios checks for RabbitMQ
 
@@ -61,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Sep 07 2011 James Casey <jamesc.000@gmail.com> 1.0.3-1
+- Added extra Basic Auth domain for rabbitmq 2.6.0
+  Thanks to Bill Gerrard for spotting it
 * Mon Jun 06 2011 James Casey <jamesc.000@gmail.com> 1.0.2-1
 - Build fixes
 * Wed Jan 12 2011 James Casey <jamesc.000@gmail.com> 1.0.1-1

@@ -96,6 +96,9 @@ my $port=$p->opts->port;
 my $ua = LWP::UserAgent->new(env_proxy=>1);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
+# Different security domains in 2.5 and 2.6
+$ua->credentials("$hostname:$port",
+    "RabbitMQ Management", $p->opts->user, $p->opts->password);
 $ua->credentials("$hostname:$port",
     "Management: Web UI", $p->opts->user, $p->opts->password);
 
