@@ -9,4 +9,5 @@ scripts/check_rabbitmq_aliveness
 scripts/check_rabbitmq_objects
 scripts/check_rabbitmq_overview
 scripts/check_rabbitmq_server
+scripts/check_rabbitmq_queue
 META.json

@@ -61,6 +61,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 26 2011 James Casey <jamesc.000@gmail.com> 1.0.4-1
+- added check_rabbitmq_queue
 * Wed Sep 07 2011 James Casey <jamesc.000@gmail.com> 1.0.3-1
 - Added extra Basic Auth domain for rabbitmq 2.6.0
   Thanks to Bill Gerrard for spotting it
