@@ -132,6 +132,11 @@ if (!$res->is_success) {
 }
 
 my $bodyref = decode_json $res->content;
+
+if (!$bodyref->{'running'}) {
+    $p->nagios_exit(CRITICAL, "Not running: ".$path);
+}
+
 check($p, "Memory", $bodyref->{'mem_used'}, $bodyref->{'mem_limit'}, $warning[0], $critical[0]);
 check($p, "Process", $bodyref->{'proc_used'}, $bodyref->{'proc_total'}, $warning[1], $critical[1]);
 check($p, "FD", $bodyref->{'fd_used'}, $bodyref->{'fd_total'}, $warning[2], $critical[2]);
