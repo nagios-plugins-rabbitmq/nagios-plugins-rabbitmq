@@ -54,20 +54,20 @@ $p->add_arg(
     spec => 'warning|w=s',
 
     help =>
-qq{-w, --warning=INTEGER,INTEGER,INTEGER
+qq{-w, --warning=INTEGER,INTEGER,INTEGER,INTEGER
    Warning thresholds specified in order that the metrics are returned.
    (Default : %s)},
 #   required => 1,
-   default => "80,80,80",
+   default => "80,80,80,80",
 );
 
 $p->add_arg(
     spec => 'critical|c=s',
     help =>
-qq{-c, --critical=INTEGER,INTEGER,INTEGER
+qq{-c, --critical=INTEGER,INTEGER,INTEGER,INTEGER
    Warning thresholds specified in order that the metrics are returned.
    (Default: %s) },
-   default => "90,90,90",
+   default => "90,90,90,90",
 );
 
 $p->add_arg(spec => 'user|u=s',
@@ -85,10 +85,10 @@ $p->getopts;
 
 # Check we have three values for warning and critical thresholds
 my @warning = split(',', $p->opts->warning);
-$p->nagios_die("You should specify three ranges for --warning argument") unless $#warning == 2;
+$p->nagios_die("You should specify four ranges for --warning argument") unless $#warning == 3;
 
 my @critical = split(',', $p->opts->critical);
-$p->nagios_die("You should specify three ranges for --critical argument") unless $#critical == 2;
+$p->nagios_die("You should specify four ranges for --critical argument") unless $#critical == 3;
 
 ##############################################################################
 # check stuff.
@@ -140,6 +140,7 @@ if (!$bodyref->{'running'}) {
 check($p, "Memory", $bodyref->{'mem_used'}, $bodyref->{'mem_limit'}, $warning[0], $critical[0]);
 check($p, "Process", $bodyref->{'proc_used'}, $bodyref->{'proc_total'}, $warning[1], $critical[1]);
 check($p, "FD", $bodyref->{'fd_used'}, $bodyref->{'fd_total'}, $warning[2], $critical[2]);
+check($p, "Sockets", $bodyref->{'sockets_used'}, $bodyref->{'sockets_total'}, $warning[3], $critical[3]);
 
 ($code, $message) = $p->check_messages(join_all=>', ');
 $p->nagios_exit( return_code=>$code, message=>$message);
@@ -175,7 +176,7 @@ sub structured {
 =head1 NAME
 
 check_rabbitmq_server - Nagios plugin using RabbitMQ management API to
-check the server resource usage (processes, memory and file descriptors)
+check the server resource usage (processes, memory, file descriptors, and sock descriptors)
 
 =head1 SYNOPSIS
 
@@ -248,15 +249,15 @@ is needed is to specify the host to connect to:
 This returns a standard Nagios result:
 
     RABBITMQ_SERVER OK - Memory OK (6.19%) Process OK (0.01%)
-        FD OK (2.53%) | Memory=6.19%;80;90 Process=0.01%;80;90 FD=2.53%;80;90
+        FD OK (2.53%) Sockets OK (0.86%) | Memory=6.19%;80;90 Process=0.01%;80;90 FD=2.53%;80;90 Sockets=0.86%;1;2
 
 You can specify different warning and criticality levels.  B<-w> and B<-c>
-both accept three comma-separated percentages which represent the
+both accept four comma-separated percentages which represent the
 thresholds for memory, process and file descriptor usage respectively.  For
-example, to specify warnings for memory at 60%, process at 80% and file
-descriptors at 95%:
+example, to specify warnings for memory at 60%, process at 80%, file
+descriptors at 95%, and socket descriptors at 90%:
 
-    check_rabbitmq_server -H rabbit.example.com  -w 60,80,95
+    check_rabbitmq_server -H rabbit.example.com  -w 60,80,95,90
 
 =head1 ERRORS
 
