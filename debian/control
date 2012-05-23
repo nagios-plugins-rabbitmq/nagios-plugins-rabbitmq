@@ -10,6 +10,6 @@ Homepage: <https://github.com/CoolCold/nagios-plugins-rabbitmq>
 
 Package: nagios-plugins-rabbitmq
 Architecture: all
-Depends: ${misc:Depends}, libjson-perl, libwww-perl, perl-base
+Depends: ${misc:Depends}, libjson-perl, libwww-perl, perl-base, libnagios-plugin-perl
 Description: <rabbitmq plugins for nagios>
  <rabbitmq checks for nagios>
