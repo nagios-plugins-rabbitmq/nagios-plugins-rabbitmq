@@ -112,7 +112,7 @@ if (!$res->is_success) {
 
 my $bodyref = decode_json $res->content;
 $bodyref->{'mem_alarm'} eq "false" or $p->nagios_exit(CRITICAL, $res->content);
-my($code, $message) = (OK, "vhost: ".$p->opts->vhost);
+my($code, $message) = (OK);
 $p->nagios_exit(
     return_code => $code,
     message => $message
