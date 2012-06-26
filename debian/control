@@ -1,5 +1,5 @@
 Source: nagios-plugins-rabbitmq
-Section: unknown
+Section: net
 Priority: extra
 Maintainer: Roman Ovchinnikov <coolthecold@gmail.com>
 Build-Depends: debhelper (>= 7.0.50~), libjson-perl, libwww-perl, perl-base
