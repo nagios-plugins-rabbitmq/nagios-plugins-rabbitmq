@@ -7,7 +7,8 @@
 use strict;
 use warnings;
 
-use Nagios::Plugin qw(%STATUS_TEXT OK CRITICAL WARNING UNKNOWN);
+use Nagios::Plugin qw(OK CRITICAL WARNING UNKNOWN);
+use Nagios::Plugin::Functions qw(%STATUS_TEXT);
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
@@ -61,6 +62,11 @@ qq{-c, --critical=INTEGER,INTEGER,INTEGER
    Specify -1 if no critical threshold.},
 );
 
+$p->add_arg(spec => 'ssl|ssl!',
+    help => "Use SSL (default: false)",
+    default => 0
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -103,7 +109,7 @@ $ua->credentials("$hostname:$port",
     "Management: Web UI", $p->opts->user, $p->opts->password);
 
 
-my $url = sprintf("http://%s:%d/api/overview", $hostname, $port);
+my $url = sprintf("http%s://%s:%d/api/overview", ($p->opts->ssl ? "s" : ""), $hostname, $port);
 my ($retcode, $result) = request($url);
 if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : /api/overview");
@@ -191,6 +197,10 @@ The host to connect to
 =item --port
 
 The port to connect to (default: 55672)
+
+=item --ssl
+
+Use SSL when connecting (default: false)
 
 =item --user
 

@@ -7,7 +7,8 @@
 use strict;
 use warnings;
 
-use Nagios::Plugin qw(%STATUS_TEXT OK CRITICAL WARNING UNKNOWN);
+use Nagios::Plugin qw(OK CRITICAL WARNING UNKNOWN);
+use Nagios::Plugin::Functions qw(%STATUS_TEXT);
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
@@ -71,6 +72,11 @@ qq{-c, --critical=INTEGER,INTEGER,INTEGER
    Specify -1 if no critical threshold.},
 );
 
+$p->add_arg(spec => 'ssl|ssl!',
+    help => "Use SSL (default: false)",
+    default => 0
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -115,7 +121,7 @@ $ua->credentials("$hostname:$port",
     "RabbitMQ Management", $p->opts->user, $p->opts->password);
 
 
-my $url = sprintf("http://%s:%d/api/queues/%s/%s", $hostname, $port, $vhost, $queue);
+my $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
 my ($retcode, $result) = request($url);
 if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : $url");
@@ -203,6 +209,10 @@ The host to connect to
 =item --port
 
 The port to connect to (default: 55672)
+
+=item --ssl
+
+Use SSL when connecting (default: false)
 
 =item --user
 

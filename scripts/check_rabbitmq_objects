@@ -45,6 +45,10 @@ $p->add_arg(spec => 'password|p=s',
     default => "guest"
 );
 
+$p->add_arg(spec => 'ssl|ssl!',
+    help => "Use SSL (default: false)",
+    default => 0
+);
 
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
@@ -70,7 +74,7 @@ $ua->credentials("$hostname:$port",
 
 my @calls = ("vhost", "exchange", "binding", "queue", "channel");
 for my $call (@calls) {
-    my $url = sprintf("http://%s:%d/api/%ss", $hostname, $port, $call);
+    my $url = sprintf("http%s://%s:%d/api/%ss", ($p->opts->ssl ? "s" : ""), $hostname, $port, $call);
     my ($code, $result) = request($url);
     if ($code != 200) {
         $p->nagios_exit(CRITICAL, "$result : /api/". $call."s");
@@ -163,6 +167,10 @@ The host to connect to
 =item --port
 
 The port to connect to (default: 55672)
+
+=item --ssl
+
+Use SSL when connecting (default: false)
 
 =item --user
 
