@@ -79,6 +79,11 @@ $p->add_arg(spec => 'password|p=s',
     default => "guest"
 );
 
+$p->add_arg(spec => 'ssl|ssl!',
+    help => "Use SSL (default: false)",
+    default => 0
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -105,7 +110,7 @@ if (!$nodename) {
 my $port = $p->opts->port;
 
 my $path = "nodes/rabbit\@$nodename";
-my $url = "http://$hostname:$port/api/$path";
+my $url = sprintf("http%s://%s:%d/api/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $path);
 
 my $ua = LWP::UserAgent->new(env_proxy=>1);
 $ua->agent($PROGNAME.' ');
@@ -215,6 +220,10 @@ The host to connect to
 =item --port
 
 The port to connect to (default: 55672)
+
+=item --ssl
+
+Use SSL when connecting (default: false)
 
 =item -w | --warning
 
