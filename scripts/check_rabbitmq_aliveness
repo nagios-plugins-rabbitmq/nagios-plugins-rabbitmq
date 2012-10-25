@@ -39,7 +39,7 @@ my $p = Nagios::Plugin->new(
     blurb => 'This plugin uses the RabbitMQ management aliveness-check to send/receive a message through a vhost.',
 );
 
-$p->add_arg(spec => 'host|H=s',
+$p->add_arg(spec => 'hostname|H=s',
     help => "Specify the host to connect to",
     required => 1
 );
@@ -48,7 +48,7 @@ $p->add_arg(spec => 'port=i',
     default => 55672
 );
 
-$p->add_arg(spec => 'user|u=s',
+$p->add_arg(spec => 'username|u=s',
     help => "Username (default: %s)",
     default => "guest",
 );
@@ -71,7 +71,7 @@ $p->getopts;
 ##############################################################################
 # check stuff.
 
-my $hostname=$p->opts->host;
+my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 my $vhost=uri_escape($p->opts->vhost);
 
@@ -82,9 +82,9 @@ $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 # Different security domains in 2.5 and 2.6
 $ua->credentials("$hostname:$port",
-    "RabbitMQ Management", $p->opts->user, $p->opts->password);
+    "RabbitMQ Management", $p->opts->username, $p->opts->password);
 $ua->credentials("$hostname:$port",
-    "Management: Web UI", $p->opts->user, $p->opts->password);
+    "Management: Web UI", $p->opts->username, $p->opts->password);
 my $req = HTTP::Request->new(GET => $url);
 my $res = $ua->request($req);
 
@@ -141,7 +141,7 @@ Verbose output
 
 Set a timeout for the check in seconds
 
-=item -H | --host
+=item -H | --hostname
 
 The host to connect to
 
@@ -153,7 +153,7 @@ The port to connect to (default: 55672)
 
 The vhost to create the test queue within (default: /)
 
-=item --user
+=item --username
 
 The user to connect as (default: guest)
 
