@@ -34,6 +34,9 @@ Currently we have 5 checks:
   - Use the `/api/queue` API to collect the number of pending, ready
     and unacknowledged messages on a given queue
 
+- check\_rabbitmq\_watermark
+  - Use the `/api/nodes` API to check to see if mem_alarm has been set to true
+
 See the relevant POD documentation/man pages for more information on usage.
 
 Licence
