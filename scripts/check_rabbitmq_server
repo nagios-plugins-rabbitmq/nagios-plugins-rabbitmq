@@ -9,7 +9,8 @@
 use strict;
 use warnings;
 
-use Nagios::Plugin qw(%STATUS_TEXT OK CRITICAL WARNING UNKNOWN);
+use Nagios::Plugin qw(OK CRITICAL WARNING UNKNOWN);
+use Nagios::Plugin::Functions qw(%STATUS_TEXT);
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
