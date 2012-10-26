@@ -154,10 +154,14 @@ sub check {
     my $warning = shift;
     my $critical = shift;
 
-    my $value = percent($used, $limit);
-    my $code = $p->check_threshold(check => $value, warning => $warning, critical => $critical);
-    $p->add_message($code, sprintf("$label ".$STATUS_TEXT{$code}." (%.2f%%)", $value)) ;
-    $p->add_perfdata(label=>$label, value => $value, uom=>"%", warning=>$warning, critical=>$critical);
+    if (!$p || !$used) {
+      $p->nagios_exit( return_code=>CRITICAL, message=>'Unable to get values for '.$label);
+    } else {
+      my $value = percent($used, $limit);
+      my $code = $p->check_threshold(check => $value, warning => $warning, critical => $critical);
+      $p->add_message($code, sprintf("$label ".$STATUS_TEXT{$code}." (%.2f%%)", $value)) ;
+      $p->add_perfdata(label=>$label, value => $value, uom=>"%", warning=>$warning, critical=>$critical);
+    }
 }
 
 sub percent {
