@@ -167,7 +167,8 @@ sub check {
 sub percent {
     my $num = shift;
     my $denom = shift;
-    return (10000 * $num/ $denom)%1000/100;
+    my $value = ($num/ $denom)*100;
+    return sprintf("%.2f", $value)
 }
 
 sub structured {
