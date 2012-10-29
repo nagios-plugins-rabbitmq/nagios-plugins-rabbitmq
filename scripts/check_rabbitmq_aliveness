@@ -39,7 +39,7 @@ my $p = Nagios::Plugin->new(
     blurb => 'This plugin uses the RabbitMQ management aliveness-check to send/receive a message through a vhost.',
 );
 
-$p->add_arg(spec => 'hostname|H=s',
+$p->add_arg(spec => 'hostname|host|H=s',
     help => "Specify the host to connect to",
     required => 1
 );
@@ -48,7 +48,7 @@ $p->add_arg(spec => 'port=i',
     default => 55672
 );
 
-$p->add_arg(spec => 'username|u=s',
+$p->add_arg(spec => 'username|user|u=s',
     help => "Username (default: %s)",
     default => "guest",
 );
@@ -141,7 +141,7 @@ Verbose output
 
 Set a timeout for the check in seconds
 
-=item -H | --hostname
+=item -H | --hostname | --host
 
 The host to connect to
 
@@ -153,7 +153,7 @@ The port to connect to (default: 55672)
 
 The vhost to create the test queue within (default: /)
 
-=item --username
+=item --username | --user
 
 The user to connect as (default: guest)
 
