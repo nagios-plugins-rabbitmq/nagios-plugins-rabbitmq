@@ -39,7 +39,7 @@ my $p = Nagios::Plugin->new(
     blurb => 'This plugin uses the RabbitMQ management API to check if the mem_alarm has been triggered',
 );
 
-$p->add_arg(spec => 'host|H=s',
+$p->add_arg(spec => 'hostname|host|H=s',
     help => "Specify the host to connect to",
     required => 1
 );
@@ -50,7 +50,7 @@ $p->add_arg(spec => 'port=i',
 $p->add_arg(spec => 'node|n=s',
     help => "Specify the node name (default is hostname)"
 );
-$p->add_arg(spec => 'user|u=s',
+$p->add_arg(spec => 'username|user|u=s',
     help => "Username (default: %s)",
     default => "guest",
 );
@@ -63,6 +63,12 @@ $p->add_arg(spec => 'vhost=s',
     help => "Specify the vhost to test (default: %s)",
     default => "/"
 );
+
+$p->add_arg(spec => 'ssl|ssl!',
+    help => "Use SSL (default: false)",
+    default => 0
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -73,7 +79,7 @@ $p->getopts;
 ##############################################################################
 # check stuff.
 
-my $hostname=$p->opts->host;
+my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 my $vhost=uri_escape($p->opts->vhost);
 
@@ -84,16 +90,16 @@ if (!$nodename) {
     $nodename = $1;
 }
 
-my $url = "http://$hostname:$port/api/nodes/rabbit\@$nodename";
+my $url = sprintf("http%s://%s:%d/api/nodes/rabbit\@%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $nodename);
 
 my $ua = LWP::UserAgent->new(env_proxy=>1);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 # Different security domains in 2.5 and 2.6
 $ua->credentials("$hostname:$port",
-    "RabbitMQ Management", $p->opts->user, $p->opts->password);
+    "RabbitMQ Management", $p->opts->username, $p->opts->password);
 $ua->credentials("$hostname:$port",
-    "Management: Web UI", $p->opts->user, $p->opts->password);
+    "Management: Web UI", $p->opts->username, $p->opts->password);
 my $req = HTTP::Request->new(GET => $url);
 my $res = $ua->request($req);
 
@@ -149,7 +155,7 @@ Verbose output
 
 Set a timeout for the check in seconds
 
-=item -H | --host
+=item -H | --hostname | --host
 
 The host to connect to
 
@@ -157,11 +163,15 @@ The host to connect to
 
 The port to connect to (default: 55672)
 
+=item --ssl
+
+Use SSL when connecting (default: false)
+
 =item --vhost
 
 The vhost to create the test queue within (default: /)
 
-=item --user
+=item --username | --user
 
 The user to connect as (default: guest)
 
