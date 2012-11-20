@@ -89,7 +89,7 @@ $p->add_arg(spec => 'ssl|ssl!',
 $p->getopts;
 
 
-# Check we have three values for warning and critical thresholds
+# Check we have four values for warning and critical thresholds
 my @warning = split(',', $p->opts->warning);
 $p->nagios_die("You should specify four ranges for --warning argument") unless $#warning == 3;
 
@@ -234,15 +234,19 @@ Use SSL when connecting (default: false)
 
 =item -w | --warning
 
-The warning levels, expressed as a percentage for each of memory, process
-and file descriptor usage.  This field consists of three comma-separated
-integers.  (default: 90,90,90)
+The warning levels, expressed as a percentage for each of memory, process,
+file descriptor and sockets usage.  This field consists of four comma-separated
+integers.  (default: 80,80,80,80)
 
 =item -c | --critical
 
-The critical levels, expressed as a percentage for each of memory, process
-and file descriptor usage.  This field consists of three comma-separated
-integers.  (default: 90,90,90)
+The critical levels, expressed as a percentage for each of memory, process,
+file descriptor and sockets usage.  This field consists of four comma-separated
+integers.  (default: 90,90,90,90)
+
+=item -n | --node
+
+The node name (default is hostname)
 
 =item --username | --user
 
