@@ -241,7 +241,7 @@ integers.  (default: 80,80,80,80)
 =item -c | --critical
 
 The critical levels, expressed as a percentage for each of memory, process,
-file descriptor and sockets usage.  This field consists of three comma-separated
+file descriptor and sockets usage.  This field consists of four comma-separated
 integers.  (default: 90,90,90,90)
 
 =item --username | --user
