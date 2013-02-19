@@ -134,8 +134,7 @@ check_rabbitmq_watermark [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to check that the server is alive.
-It declares a test queue, then publishes and consumes a message.
+Use the management interface of RabbitMQ to check if the mem_alarm has been triggered.
 
 It uses Nagios::Plugin and accepts all standard Nagios options.
 
@@ -170,6 +169,10 @@ Use SSL when connecting (default: false)
 =item --vhost
 
 The vhost to create the test queue within (default: /)
+
+=item -n | --node
+
+The node name (default is hostname)
 
 =item --username | --user
 
