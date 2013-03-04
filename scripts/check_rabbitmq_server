@@ -43,7 +43,7 @@ $p->add_arg(spec => 'hostname|host|H=s',
     help => "Specify the host to connect to",
     required => 1
 );
-$p->add_arg(spec => 'port|p=i',
+$p->add_arg(spec => 'port=i',
     help => "Specify the port to connect to (default: %s)",
     default => 55672
 );
