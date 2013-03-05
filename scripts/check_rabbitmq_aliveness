@@ -66,6 +66,12 @@ $p->add_arg(spec => 'ssl|ssl!',
     help => "Use SSL (default: false)",
     default => 0
 );
+
+$p->add_arg(spec => 'proxy|proxy!',
+    help => "Use environment proxy (default: true)",
+    default => 1
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -82,7 +88,7 @@ my $vhost=uri_escape($p->opts->vhost);
 
 my $url = sprintf("http%s://%s:%d/api/aliveness-test/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
 
-my $ua = LWP::UserAgent->new(env_proxy=>1);
+my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 # Different security domains in 2.5 and 2.6
