@@ -1,0 +1,261 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+use JSON -support_by_pp;
+use LWP::UserAgent;
+use Nagios::Plugin;
+
+
+$::PROGRAM = "check_rabbitmq_shovels";
+$::VERSION = "1.0";
+
+
+#
+# main
+#
+MAIN: {
+    run() unless caller();
+}
+
+
+#
+# run()
+# ---
+sub run {
+    my $np = Nagios::Plugin->new(
+        plugin  => $::PROGRAM,
+        version => $::VERSION,
+        blurb   => "check that all the shovels of the given RabbitMQ host "
+                 . "are running",
+        usage   => "Usage: %s [-H host]",
+        timeout => 5,
+    );
+
+    # declare options
+    $np->add_arg(
+        spec    => "hostname|host|H=s",
+        help    => "Specify the RabbitMQ host to query. Defaults to '%s'.",
+        default => "localhost",
+    );
+    $np->add_arg(
+        spec    => "port|P=s",
+        help    => "Specify the port number to query RabbitMQ on. Defaults to %s.",
+        default => 55672,
+    );
+    $np->add_arg(
+        spec    => "username|user|u=s",
+        help    => "Specify the username. Defaults to '%s'.",
+        default => "guest",
+    );
+    $np->add_arg(
+        spec    => "password|pass|p=s",
+        help    => "Specify the password. Defaults to '%s'.",
+        default => "guest",
+    );
+
+    # parse options
+    $np->getopts;
+
+    # --------------------------------------
+
+    # create and configure the JSON parser
+    my $json = JSON->new;
+    $json->allow_nonref->utf8->relaxed->escape_slash->loose;
+    $json->allow_singlequote->allow_barekey;
+
+    # construct the URL authority
+    my $url_authority = $np->opts->username . ":" . $np->opts->password
+                      . '@' . $np->opts->hostname . ":" . $np->opts->port;
+
+    # fetch the list of shovels
+    alarm $np->opts->timeout;
+    my $agent       = LWP::UserAgent->new;
+    my $response    = $agent->get("http://$url_authority/api/shovels");
+
+    $np->nagios_exit(
+        return_code => CRITICAL,
+        message     => "API error: ".$response->status_line
+        ) unless $response->is_success;
+
+    # decode the JSON
+    my $shovels = eval { $json->decode($response->decoded_content || "[]") };
+
+    $np->nagios_exit(
+        return_code => CRITICAL,
+        message     => "API error: could not parse JSON: $@"
+        ) if $@;
+
+    $np->nagios_exit(
+        return_code => CRITICAL,
+        message     => "API error: empty JSON"
+        ) unless @$shovels;
+
+    # process the shovels
+    my (@running, @blocked, @terminated);
+
+    for my $shovel (@$shovels) {
+        push @running, $shovel->{name} and next
+            if $shovel->{state} eq "running";
+        push @blocked, $shovel->{name} and next
+            if $shovel->{state} eq "blocked";
+        push @terminated, $shovel->{name} and next
+            if $shovel->{state} eq "terminated";
+    }
+
+    # construct the status message
+    my ($status, @message);
+
+    if (@running) {
+        my $s = (my $n = @running) > 1 ? "s" : "";
+        unshift @message, "$n running shovel$s: @running";
+        $status = OK;
+    }
+    if (@blocked) {
+        my $s = (my $n = @blocked) > 1 ? "s" : "";
+        unshift @message, "$n blocked shovel$s: @blocked";
+        $status = WARNING;
+    }
+    if (@terminated) {
+        my $s = (my $n = @terminated) > 1 ? "s" : "";
+        unshift @message, "$n terminated shovel$s: @terminated";
+        $status = CRITICAL;
+    }
+
+    # return the appropriate status code and message
+    $np->nagios_exit(
+        return_code => $status,
+        message     => join ", ", @message,
+    );
+}
+
+
+1
+
+__END__
+
+=pod
+
+=head1 NAME
+
+check_rabbitmq_shovels - Nagios plugin to check that all shovels of the
+given RabbitMQ host are running
+
+
+=head1 SYNOPSIS
+
+    check_rabbitmq_shovels --hostname <host>
+    check_rabbitmq_shovels { --help | --man | --version }
+
+
+=head1 OPTIONS
+
+=head2 Program options
+
+=over
+
+=item B<-H>, B<--hostname> I<string>
+
+Specify the RabbitMQ host to query. Defaults to C<localhost>.
+
+=item B<-P>, B<--port> I<number>
+
+Specify the port number to query RabbitMQ on. Defaults to 55672.
+
+=item B<-u>, B<--user>, B<--username> I<string>
+
+Specify the username. Defaults to C<guest>.
+
+=item B<-p>, B<--pass>, B<--password> I<string>
+
+Specify the password. Defaults to C<guest>.
+
+=item B<-t>, B<--timeout> I<duration>
+
+Specify the timeout period in seconds. Defaults to 5.
+
+=back
+
+=head2 Help options
+
+=over
+
+=item B<-?>, B<--usage>
+
+Print a short usage description, then exit.
+
+=item B<-h>, B<--help>
+
+Print a more detailed help screen, then exit.
+
+=item B<-V>, B<--version>
+
+Print the program name and version, then exit.
+
+=back
+
+
+=head1 DESCRIPTION
+
+This program is a Nagios plugin that uses the JSON over HTTP API 
+to check that all shovels of the given RabbitMQ host are running.
+The default settings match the standard installation of RabbitMQ.
+
+The check returns C<OK> if all shovels are running, C<WARNING> if
+one or more shovels are blocked, C<CRITICAL> if one or more shovels
+are terminated.
+
+
+=head1 EXAMPLES
+
+With default settings, only the hostname need to be specified:
+
+    check_rabbitmq_shovels -H <host>
+
+It prints the global status and the details of the shovels, by
+decreasing order or criticity:
+
+    RABBITMQ_SHOVELS OK - 3 running shovels: klonk zlott swish
+
+    RABBITMQ_SHOVELS WARNING - 1 blocked shovel: klonk, 2 running shovels: zlott swish
+
+    RABBITMQ_SHOVELS CRITICAL - 1 terminated shovel: zlott, 1 blocked shovel: klonk, 1 running shovel: swish
+
+In the case of an API error, the program will give an appropriate
+diagnostic:
+
+    RABBITMQ_SHOVELS CRITICAL - API error: 401 Unauthorized
+
+    RABBITMQ_SHOVELS CRITICAL - API error: 500 Can't connect to <host>:<port>
+
+    RABBITMQ_SHOVELS CRITICAL - API error: could not parse JSON: malformed JSON string
+
+    RABBITMQ_SHOVELS CRITICAL - API error: empty JSON
+
+
+=head1 SEE ALSO
+
+See L<Nagios::Plugin>
+
+The RabbitMQ management plugin is described at
+L<http://www.rabbitmq.com/management.html>
+
+
+=head1 LICENSE
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+=head1 AUTHOR
+
+Sebastien Aperghis-Tramoni (sebastien@aperghis.net)
+
