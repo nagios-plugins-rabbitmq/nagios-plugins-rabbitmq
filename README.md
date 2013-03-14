@@ -31,8 +31,8 @@ Currently we have 5 checks:
     and unacknowledged messages on the server
 
 - check\_rabbitmq\_queue
-  - Use the `/api/queue` API to collect the number of pending, ready
-    and unacknowledged messages on a given queue
+  - Use the `/api/queue` API to collect the number of pending, ready and
+    unacknowledged messages and the number of consumers on a given queue
 
 - check\_rabbitmq\_watermark
   - Use the `/api/nodes` API to check to see if mem_alarm has been set to true
