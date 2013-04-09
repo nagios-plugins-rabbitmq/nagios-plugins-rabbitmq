@@ -2,7 +2,7 @@
 
 ###  check_rabbitmq_watermark.pl
 
-# Use the management API to check if mem_alarm has been triggered. 
+# Use the management API to check if mem_alarm or disk_free_alarm has been triggered. 
 
 # Originally by Nathan Vonnahme, n8v at users dot sourceforge
 # dot net, July 19 2006
@@ -36,7 +36,7 @@ my $p = Nagios::Plugin->new(
     usage => "Usage: %s [options] -H hostname",
     license => "",
     version => $VERSION,
-    blurb => 'This plugin uses the RabbitMQ management API to check if the mem_alarm has been triggered',
+    blurb => 'This plugin uses the RabbitMQ management API to check if the mem_alarm or disk_free_alarm has been triggered',
 );
 
 $p->add_arg(spec => 'hostname|host|H=s',
@@ -122,8 +122,17 @@ if (!$res->is_success) {
 }
 
 my $bodyref = decode_json $res->content;
-$bodyref->{'mem_alarm'} eq "false" or $p->nagios_exit(CRITICAL, $res->content);
-my($code, $message) = (OK);
+my @checks = ("mem_alarm", "disk_free_alarm");
+
+for my $check (@checks) {
+    if ($bodyref->{$check} eq 'false') {
+        $p->add_message(OK, "$check");
+    } else {
+        $p->add_message(CRITICAL, "$check");
+    }
+}
+
+my($code, $message) = $p->check_messages(join_all=>', ');
 $p->nagios_exit(
     return_code => $code,
     message => $message
@@ -131,7 +140,7 @@ $p->nagios_exit(
 
 =head1 NAME
 
-check_rabbitmq_watermark - Nagios plugin using RabbitMQ management API to check if the mem_alarm has been triggered 
+check_rabbitmq_watermark - Nagios plugin using RabbitMQ management API to check if the mem_alarm or disk_free_alarm has been triggered 
 
 =head1 SYNOPSIS
 
@@ -139,7 +148,7 @@ check_rabbitmq_watermark [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to check if the mem_alarm has been triggered.
+Use the management interface of RabbitMQ to check if the mem_alarm or disk_free_alarm has been triggered.
 
 It uses Nagios::Plugin and accepts all standard Nagios options.
 
