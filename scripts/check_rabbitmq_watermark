@@ -114,10 +114,10 @@ if (!$res->is_success) {
         my $bodyref = decode_json $res->content;
         $p->nagios_exit(CRITICAL, $bodyref->{'reason'});
     }
-    $res->code == 404 and $p->nagios_die("Not found: ".$p->opts->vhost);
-    $res->code == 401 and $p->nagios_die("Access refused: ".$p->opts->vhost);
+    $res->code == 404 and $p->nagios_die("Not found");
+    $res->code == 401 and $p->nagios_die("Access refused");
     if ($res->code < 200 or $res->code > 400 ) {
-        $p->nagios_exit(CRITICAL, "Received ".$res->status_line." for vhost: ".$p->opts->vhost);
+        $p->nagios_exit(CRITICAL, "Received ".$res->status_line);
     }
 }
 
