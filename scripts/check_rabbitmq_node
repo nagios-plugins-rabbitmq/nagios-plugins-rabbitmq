@@ -143,7 +143,6 @@ if ($p->opts->check_partitions) {
   my $partitions=$bodyref->{'partitions'};
   ref($partitions) eq "ARRAY" or $p->nagios_exit(CRITICAL, $res->content);
   scalar(@$partitions)==0 or $p->nagios_exit(CRITICAL, "partitions detected: @$partitions");
-  $p->nagios_exit(CRITICAL, "you are here");
 }
 
 my($code, $message) = (OK);
