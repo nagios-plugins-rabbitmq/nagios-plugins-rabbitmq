@@ -1,9 +1,11 @@
 #!/usr/bin/env perl
 
-###  check_rabbitmq_watermark.pl
+###  check_rabbitmq_node.pl
 
-# Use the management API to check if mem_alarm has been triggered. 
+# Use the management API to check if mem_alarm or partitions error conditions
+# exist.
 
+# baseed on check_rabbitmq_watermark.pl,
 # Originally by Nathan Vonnahme, n8v at users dot sourceforge
 # dot net, July 19 2006
 
@@ -64,6 +66,16 @@ $p->add_arg(spec => 'vhost=s',
     default => "/"
 );
 
+$p->add_arg(spec => 'check_mem_alarm',
+    help => "check for mem_alarm",
+    default => 0
+);
+
+$p->add_arg(spec => 'check_partitions',
+    help => "check for partitions",
+    default => 0
+);
+
 $p->add_arg(spec => 'ssl|ssl!',
     help => "Use SSL (default: false)",
     default => 0
@@ -122,7 +134,17 @@ if (!$res->is_success) {
 }
 
 my $bodyref = decode_json $res->content;
-$bodyref->{'mem_alarm'} eq "false" or $p->nagios_exit(CRITICAL, $res->content);
+
+if ($p->opts->check_mem_alarm) {
+  $bodyref->{'mem_alarm'} eq "false" or $p->nagios_exit(CRITICAL, $res->content);
+}
+
+if ($p->opts->check_partitions) {
+  my $partitions=$bodyref->{'partitions'};
+  ref($partitions) eq "ARRAY" or $p->nagios_exit(CRITICAL, $res->content);
+  scalar(@$partitions)==0 or $p->nagios_exit(CRITICAL, "partitions detected: @$partitions");
+}
+
 my($code, $message) = (OK);
 $p->nagios_exit(
     return_code => $code,
@@ -135,7 +157,7 @@ check_rabbitmq_watermark - Nagios plugin using RabbitMQ management API to check 
 
 =head1 SYNOPSIS
 
-check_rabbitmq_watermark [options] -H hostname
+check_rabbitmq_node [options] -H hostname
 
 =head1 DESCRIPTION
 
@@ -186,6 +208,14 @@ The user to connect as (default: guest)
 =item --pass
 
 The password for the user (default: guest)
+
+=item --check_mem_alarm
+
+Check for a mem_alarm condition.
+
+=item --check_partitions
+
+Check for a partition condition.
 
 =back
 
