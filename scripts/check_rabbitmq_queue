@@ -58,7 +58,7 @@ $p->add_arg(spec => 'queue=s',
 $p->add_arg(
     spec => 'warning|w=s',
     help =>
-qq{-w, --warning=INTEGER,INTEGER,INTEGER
+qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
    Warning thresholds specified in order that the metrics are returned.
    Specify -1 if no warning threshold.},
 
@@ -67,7 +67,7 @@ qq{-w, --warning=INTEGER,INTEGER,INTEGER
 $p->add_arg(
     spec => 'critical|c=s',
     help =>
-qq{-c, --critical=INTEGER,INTEGER,INTEGER
+qq{-c, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
    Critical thresholds specified in order that the metrics are returned.
    Specify -1 if no critical threshold.},
 );
@@ -90,21 +90,23 @@ $p->getopts;
 my %warning;
 if (defined $p->opts->warning) {
     my @warning = split(',', $p->opts->warning);
-    $p->nagios_die("You should specify three ranges for --warning argument") unless $#warning == 2;
+    $p->nagios_die("You should specify 1 to 4 ranges for --warning argument") unless $#warning < 4;
 
     $warning{'messages'} = shift @warning;
     $warning{'messages_ready'} = shift @warning;
     $warning{'messages_unacknowledged'} = shift @warning;
+    $warning{'consumers'} = shift @warning;
 }
 
 my %critical;
 if (defined $p->opts->critical) {
     my @critical = split(',', $p->opts->critical);
-    $p->nagios_die("You should specify three ranges for --critical argument") unless $#critical == 2;
+    $p->nagios_die("You should specify specify 1 to 4 ranges for --critical argument") unless $#critical < 4;
 
     $critical{'messages'} = shift @critical;
     $critical{'messages_ready'} = shift @critical;
     $critical{'messages_unacknowledged'} = shift @critical;
+    $critical{'consumers'} = shift @critical;
 }
 
 
@@ -132,12 +134,12 @@ if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : $url");
 }
 
-my @metrics = ("messages", "messages_ready", "messages_unacknowledged");
+my @metrics = ("messages", "messages_ready", "messages_unacknowledged", "consumers");
 for my $metric (@metrics) {
     my $warning = undef;
-    $warning = $warning{$metric} if (defined $warning{$metric} and $warning{$metric} != -1);
+    $warning = $warning{$metric} if (defined $warning{$metric} and $warning{$metric} ne -1);
     my $critical = undef;
-    $critical = $critical{$metric} if (defined $critical{$metric} and $critical{$metric} != -1);
+    $critical = $critical{$metric} if (defined $critical{$metric} and $critical{$metric} ne -1);
 
     my $value = $result->{$metric};
     my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
@@ -175,7 +177,7 @@ sub request {
 =head1 NAME
 
 check_rabbitmq_queue - Nagios plugin using RabbitMQ management API to
-count the messages pending on a given queue
+count the messages pending and consumers on a given queue
 
 =head1 SYNOPSIS
 
@@ -184,8 +186,8 @@ check_rabbitmq_overview [options] -H hostname
 =head1 DESCRIPTION
 
 Use the management interface of RabbitMQ to count the number of pending,
-ready and unacknowledged messages.  These are published as performance
-metrics for the check.
+ready and unacknowledged messages and number of consumers.  These are
+published as performance metrics for the check.
 
 Critical and warning thresholds can be set for each of the metrics.
 
@@ -229,30 +231,42 @@ The password for the user (default: guest)
 
 =item -w | --warning
 
-The warning levels for each count of messages, messages_ready and
-messages_unacknowledged.  This field consists of three comma-separated
-integers.  Specify -1 if no threshold for a particular count.
+The warning levels for each count of messages, messages_ready,
+messages_unacknowledged and consumers.  This field consists of
+one to four comma-separated thresholds.  Specify -1 if no threshold
+for a particular count.
 
 =item -c | --critical
 
-The critical levels for each count of messages, messages_ready and
-messages_unacknowledged.  This field consists of three comma-separated
-integers.  Specify -1 if no threshold for a particular count
+The critical levels for each count of messages, messages_ready,
+messages_unacknowledged and consumers.  This field consists of
+one to four comma-separated thresholds.  Specify -1 if no threshold
+for a particular count.
 
 =back
+
+=head1 THRESHOLD FORMAT
+
+The format of thresholds specified in --warning and --critical arguments
+is defined at <http://nagiosplug.sourceforge.net/developer-guidelines.html#THRESHOLDFORMAT>.
+
+For example to be crtical if more than 100 messages, more than 90 messages_ready,
+more than 20 messages_unacknowledged or no fewer than 10 consumers use
+
+--critical=100,90,20,10:
 
 =head1 EXAMPLES
 
 The defaults all work with a standard fresh install of RabbitMQ, and all that
 is needed is to specify the host to connect to:
 
-    check_rabbitmq_overview -H rabbit.example.com
+    check_rabbitmq_queue -H rabbit.example.com
 
 This returns a standard Nagios result:
 
     RABBITMQ_OVERVIEW OK - messages OK (25794) messages_ready OK (22971)
-      messages_unacknowledged OK (2823) | messages=25794;;
-      messages_ready=22971;; messages_unacknowledged=2823;;
+      messages_unacknowledged OK (2823) consumers OK (10) | messages=25794;;
+      messages_ready=22971;; messages_unacknowledged=2823;; consumers=10;;
 
 =head1 ERRORS
 
