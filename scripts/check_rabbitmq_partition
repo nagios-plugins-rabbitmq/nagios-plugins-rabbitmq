@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-###  check_rabbitmq_node.pl
+###  check_rabbitmq_partition
 
 # Use the management API to check if partitions error conditions exist.
 
@@ -115,7 +115,6 @@ if (!$res->is_success) {
         $p->nagios_exit(CRITICAL, "Received ".$res->status_line);
     }
 }
-
 my $bodyref = decode_json $res->content;
 
 my $partitions=$bodyref->{'partitions'};
@@ -130,15 +129,15 @@ $p->nagios_exit(
 
 =head1 NAME
 
-check_rabbitmq_watermark - Nagios plugin using RabbitMQ management API to check if the mem_alarm has been triggered
+check_rabbitmq_partition - Nagios plugin using RabbitMQ management API to check if a cluster partition has occured
 
 =head1 SYNOPSIS
 
-check_rabbitmq_node [options] -H hostname
+check_rabbitmq_partition [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to check if the mem_alarm has been triggered.
+Use the management interface of RabbitMQ to check if a cluster partition has occured.
 
 It uses Nagios::Plugin and accepts all standard Nagios options.
 
