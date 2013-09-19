@@ -4,7 +4,7 @@ use Module::Build;
 my $build = Module::Build->new
   (
    dist_name => "nagios-plugins-rabbitmq",
-   dist_version => "1.0.4",
+   dist_version => "1.1.0",
    dist_author => 'James Casey (jamesc.000@gmail.com)',
    dist_abstract => 'Nagios checks for RabbitMQ using the management interface',
    installdirs => 'site',
@@ -19,7 +19,7 @@ my $build = Module::Build->new
                 "Getopt::Long" => 0,
                },
    recommends => {
-                   "Nagios::Plugin" => "0.27",
+                   "Nagios::Plugin" => "0.33",
                   },
    configure_requires => {
                       "Module::Build" => 0,
