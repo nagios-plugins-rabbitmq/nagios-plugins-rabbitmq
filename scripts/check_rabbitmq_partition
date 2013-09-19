@@ -1,9 +1,10 @@
 #!/usr/bin/env perl
 
-###  check_rabbitmq_watermark.pl
+###  check_rabbitmq_partition
 
-# Use the management API to check if mem_alarm or disk_free_alarm has been triggered. 
+# Use the management API to check if partitions error conditions exist.
 
+# baseed on check_rabbitmq_watermark.pl,
 # Originally by Nathan Vonnahme, n8v at users dot sourceforge
 # dot net, July 19 2006
 
@@ -36,7 +37,7 @@ my $p = Nagios::Plugin->new(
     usage => "Usage: %s [options] -H hostname",
     license => "",
     version => $VERSION,
-    blurb => 'This plugin uses the RabbitMQ management API to check if the mem_alarm or disk_free_alarm has been triggered',
+    blurb => 'This plugin uses the RabbitMQ management API to check if the mem_alarm has been triggered',
 );
 
 $p->add_arg(spec => 'hostname|host|H=s',
@@ -57,11 +58,6 @@ $p->add_arg(spec => 'username|user|u=s',
 $p->add_arg(spec => 'password|p=s',
     help => "Password (default: %s)",
     default => "guest"
-);
-
-$p->add_arg(spec => 'vhost=s',
-    help => "Specify the vhost to test (default: %s)",
-    default => "/"
 );
 
 $p->add_arg(spec => 'ssl|ssl!',
@@ -86,7 +82,6 @@ $p->getopts;
 
 my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
-my $vhost=uri_escape($p->opts->vhost);
 
 my $nodename = $p->opts->node;
 
@@ -120,19 +115,13 @@ if (!$res->is_success) {
         $p->nagios_exit(CRITICAL, "Received ".$res->status_line);
     }
 }
-
 my $bodyref = decode_json $res->content;
-my @checks = ("mem_alarm", "disk_free_alarm");
 
-for my $check (@checks) {
-    if ($bodyref->{$check} eq 'false') {
-        $p->add_message(OK, "$check");
-    } else {
-        $p->add_message(CRITICAL, "$check");
-    }
-}
+my $partitions=$bodyref->{'partitions'};
+ref($partitions) eq "ARRAY" or $p->nagios_exit(CRITICAL, $res->content);
+scalar(@$partitions)==0 or $p->nagios_exit(CRITICAL, "Partitions detected: @$partitions");
 
-my($code, $message) = $p->check_messages(join_all=>', ');
+my($code, $message) = (OK, "No Partitions");
 $p->nagios_exit(
     return_code => $code,
     message => $message
@@ -140,15 +129,15 @@ $p->nagios_exit(
 
 =head1 NAME
 
-check_rabbitmq_watermark - Nagios plugin using RabbitMQ management API to check if the mem_alarm or disk_free_alarm has been triggered 
+check_rabbitmq_partition - Nagios plugin using RabbitMQ management API to check if a cluster partition has occured
 
 =head1 SYNOPSIS
 
-check_rabbitmq_watermark [options] -H hostname
+check_rabbitmq_partition [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to check if the mem_alarm or disk_free_alarm has been triggered.
+Use the management interface of RabbitMQ to check if a cluster partition has occured.
 
 It uses Nagios::Plugin and accepts all standard Nagios options.
 
@@ -180,10 +169,6 @@ The port to connect to (default: 55672)
 
 Use SSL when connecting (default: false)
 
-=item --vhost
-
-The vhost to create the test queue within (default: /)
-
 =item -n | --node
 
 The node name (default is hostname)
@@ -203,15 +188,11 @@ The password for the user (default: guest)
 The defaults all work with a standard fresh install of RabbitMQ, and all that
 is needed is to specify the host to connect to:
 
-    check_rabbitmq_watermark -H rabbit.example.com
+    check_rabbitmq_node -H rabbit.example.com
 
 This returns a standard Nagios result:
 
-    RABBITMQ_ALIVENESS OK - vhost: /
-
-You can choose a different vhost to use for the check also:
-
-    check_rabbitmq_watermark -H rabbit.example.com --vhost /foo
+    RABBITMQ_NODE OK - No Partitions
 
 =head1 ERRORS
 
