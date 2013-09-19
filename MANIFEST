@@ -3,11 +3,12 @@ Build.PL
 LICENSE.txt
 MANIFEST			This list of files
 META.yml
-nagios-plugins-rabbitmq.spec
 README.md
 scripts/check_rabbitmq_aliveness
 scripts/check_rabbitmq_objects
 scripts/check_rabbitmq_overview
+scripts/check_rabbitmq_partition
+scripts/check_rabbitmq_shovels
 scripts/check_rabbitmq_server
 scripts/check_rabbitmq_queue
 scripts/check_rabbitmq_watermark
