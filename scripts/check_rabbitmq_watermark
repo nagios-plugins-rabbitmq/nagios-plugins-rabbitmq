@@ -125,7 +125,7 @@ my $bodyref = decode_json $res->content;
 my @checks = ("mem_alarm", "disk_free_alarm");
 
 for my $check (@checks) {
-    if ($bodyref->{$check} eq 'false') {
+    if ($bodyref->{$check} eq 0) {
         $p->add_message(OK, "$check");
     } else {
         $p->add_message(CRITICAL, "$check");
