@@ -67,7 +67,7 @@ qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
 $p->add_arg(
     spec => 'critical|c=s',
     help =>
-qq{-c, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
+qq{-c, --critical=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
    Critical thresholds specified in order that the metrics are returned.
    Specify -1 if no critical threshold.},
 );
