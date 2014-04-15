@@ -74,6 +74,11 @@ $p->add_arg(spec => 'proxy|proxy!',
     default => 1
 );
 
+$p->add_arg(spec => 'memorythreshold=i',
+    help => "Memory percentage threshold (default: 80)",
+    default => 80
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -122,8 +127,19 @@ if (!$res->is_success) {
 }
 
 my $bodyref = decode_json $res->content;
-my @checks = ("mem_alarm", "disk_free_alarm");
 
+# Check if memory used is below threshold
+my $percentage_memory_used = $bodyref->{mem_used} / $bodyref->{mem_limit} * 100;
+if ($percentage_memory_used >= $p->opts->memorythreshold)
+{
+    $p->add_message(CRITICAL, "$bodyref->{mem_used} bytes used out of $bodyref->{mem_limit} ($percentage_memory_used%)");
+}
+else
+{
+    $p->add_message(OK, "$bodyref->{mem_used} bytes used out of $bodyref->{mem_limit} ($percentage_memory_used%)");
+}
+
+my @checks = ("mem_alarm", "disk_free_alarm");
 for my $check (@checks) {
     if ($bodyref->{$check} eq 0) {
         $p->add_message(OK, "$check");
