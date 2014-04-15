@@ -10,6 +10,7 @@ my $build = Module::Build->new
    installdirs => 'site',
    script_files => 'scripts',
    license => 'apache',
+   module_name => "nagios-plugins-rabbitmq",
 
    requires => {
                 "JSON" => "2.12",
