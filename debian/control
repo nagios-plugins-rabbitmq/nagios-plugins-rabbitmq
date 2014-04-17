@@ -1,0 +1,15 @@
+Source: nagios-plugins-rabbitmq
+Section: net
+Priority: extra
+Maintainer: Roman Ovchinnikov <coolthecold@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), libjson-perl, libwww-perl, perl-base
+Standards-Version: 3.8.4
+Homepage: <https://github.com/CoolCold/nagios-plugins-rabbitmq>
+#Vcs-Git: git://git.debian.org/collab-maint/nagios-plugins-rabbitmq.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/nagios-plugins-rabbitmq.git;a=summary
+
+Package: nagios-plugins-rabbitmq
+Architecture: all
+Depends: ${misc:Depends}, libjson-perl, libwww-perl, perl-base, libnagios-plugin-perl
+Description: <rabbitmq plugins for nagios>
+ <rabbitmq checks for nagios>

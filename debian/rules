@@ -1,0 +1,48 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+	dh $@ 
+clean:
+	rm -f build-stamp
+	dh_clean
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+
+	# Add here commands to compile the package.
+	#perl Build.PL --installdirs=vendor
+	perl Build.PL --installdirs vendor
+	./Build
+
+	touch build-stamp
+
+install: build
+	#add here command to install the package
+	./Build pure_install --destdir=$(CURDIR)/debian/tmp
+	#./Build pure_install
+	dh_installdirs
+	dh_install
+
+binary-indep: build install
+	dh_installchangelogs
+	dh_testdir
+	dh_testroot
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch: build install
+
+binary: binary-indep binary-arch
