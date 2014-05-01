@@ -37,6 +37,10 @@ Currently we have 5 checks:
 - check\_rabbitmq\_watermark
   - Use the `/api/nodes` API to check to see if mem_alarm has been set to true
 
+- check\_rabbitmq\_connections
+  - Use the `/api/connections` API to gather details of connections used,
+    their state and their throughput
+
 See the relevant POD documentation/man pages for more information on usage.
 
 Licence
