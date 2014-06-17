@@ -40,7 +40,7 @@ sub run {
     $np->add_arg(
         spec    => "port|P=s",
         help    => "Specify the port number to query RabbitMQ on. Defaults to %s.",
-        default => 55672,
+        default => 15672,
     );
     $np->add_arg(
         spec    => "username|user|u=s",
@@ -159,7 +159,7 @@ Specify the RabbitMQ host to query. Defaults to C<localhost>.
 
 =item B<-P>, B<--port> I<number>
 
-Specify the port number to query RabbitMQ on. Defaults to 55672.
+Specify the port number to query RabbitMQ on. Defaults to 15672.
 
 =item B<-u>, B<--user>, B<--username> I<string>
 
