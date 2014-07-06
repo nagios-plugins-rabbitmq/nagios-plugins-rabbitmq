@@ -45,7 +45,7 @@ $p->add_arg(spec => 'hostname|host|H=s',
 );
 $p->add_arg(spec => 'port=i',
     help => "Specify the port to connect to (default: %s)",
-    default => 55672
+    default => 15672
 );
 $p->add_arg(spec => 'node|n=s',
     help => "Specify the node name (default is hostname)"
@@ -174,7 +174,7 @@ The host to connect to
 
 =item --port
 
-The port to connect to (default: 55672)
+The port to connect to (default: 15672)
 
 =item --ssl
 
