@@ -122,10 +122,13 @@ for my $metric (@metrics) {
     my $critical = undef;
     $critical = $critical{$metric} if (defined $critical{$metric} and $critical{$metric} != -1);
 
-    my $value = $result->{'queue_totals'}->{$metric};
-    my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
-    $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
-    $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
+    if (ref($result->{'queue_totals'}) eq "HASH")
+	{
+        my $value = $result->{'queue_totals'}->{$metric};
+        my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
+        $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
+        $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
+	}
 }
 
 my ($code, $message) = $p->check_messages(join_all=>', ');
