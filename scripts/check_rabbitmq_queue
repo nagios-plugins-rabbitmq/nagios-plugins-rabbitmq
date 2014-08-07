@@ -21,7 +21,7 @@ use File::Basename;
 $PROGNAME = basename($0);
 
 my $p = Nagios::Plugin->new(
-    usage => "Usage: %s [options] -H hostname",
+    usage => "Usage: %s [options] -H hostname --queue queue",
     license => "",
     version => $VERSION,
     blurb => 'This plugin uses the RabbitMQ management API to monitor a specific queue.',
@@ -178,7 +178,7 @@ count the messages pending and consumers on a given queue
 
 =head1 SYNOPSIS
 
-check_rabbitmq_overview [options] -H hostname
+check_rabbitmq_overview [options] -H hostname --queue queue
 
 =head1 DESCRIPTION
 
