@@ -71,8 +71,6 @@ my $port=$p->opts->port;
 my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
-$ua->credentials("$hostname:$port",
-    "RabbitMQ Management", $p->opts->username, $p->opts->password);
 
 my @calls = ("vhost", "exchange", "binding", "queue", "channel");
 for my $call (@calls) {
@@ -94,6 +92,7 @@ $p->nagios_exit(return_code => OK, message => "Gathered Object Counts");
 sub request {
     my ($url) = @_;
     my $req = HTTP::Request->new(GET => $url);
+    $req->authorization_basic($p->opts->username, $p->opts->password);
     my $res = $ua->request($req);
 
     if (!$res->is_success) {
