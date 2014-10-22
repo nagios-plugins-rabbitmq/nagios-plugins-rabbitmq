@@ -71,6 +71,9 @@ $p->add_arg(spec => 'proxy|proxy!',
     help => "Use environment proxy (default: true)",
     default => 1
 );
+$p->add_arg(spec => 'proxyurl=s',
+help => "Use proxy url like http://proxy.domain.com:8080",
+);
 
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
@@ -89,6 +92,7 @@ my $vhost=uri_escape($p->opts->vhost);
 my $url = sprintf("http%s://%s:%d/api/aliveness-test/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
 
 my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
+$ua->proxy('http', $p->opts->proxyurl);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 $ua->credentials("$hostname:$port",
