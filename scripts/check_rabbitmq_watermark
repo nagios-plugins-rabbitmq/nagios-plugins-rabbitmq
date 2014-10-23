@@ -100,8 +100,15 @@ if (!$nodename) {
 
 my $url = sprintf("http%s://%s:%d/api/nodes/rabbit\@%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $nodename);
 
-my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
-$ua->proxy('http', $p->opts->proxyurl);
+my $ua = LWP::UserAgent->new;
+if (defined $p->opts->proxyurl)
+{
+        $ua->proxy('http', $p->opts->proxyurl);
+}
+elsif($p->opts->proxy == 1 )
+{
+        $ua->env_proxy;
+}
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 $ua->credentials("$hostname:$port",

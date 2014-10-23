@@ -114,8 +114,15 @@ if (defined $p->opts->critical) {
 my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 
-my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
-$ua->proxy('http', $p->opts->proxyurl);
+my $ua = LWP::UserAgent->new;
+if (defined $p->opts->proxyurl)
+{
+        $ua->proxy('http', $p->opts->proxyurl);
+}
+elsif($p->opts->proxy == 1 )
+{
+        $ua->env_proxy;
+}
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 $ua->credentials("$hostname:$port",
