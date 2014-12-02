@@ -70,6 +70,11 @@ $p->add_arg(spec => 'proxy|proxy!',
     default => 1
 );
 
+$p->add_arg(spec => 'rname|r=s',
+    help => "RabbitName (default: %s)",
+    default => "rabbit",
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -85,12 +90,14 @@ my $port=$p->opts->port;
 
 my $nodename = $p->opts->node;
 
+my $rname = $p->opts->rname;
+
 if (!$nodename) {
     $hostname =~ /^([a-zA-Z0-9-]*)/;
     $nodename = $1;
 }
 
-my $url = sprintf("http%s://%s:%d/api/nodes/rabbit\@%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $nodename);
+my $url = sprintf("http%s://%s:%d/api/nodes/%s\@%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $rname, $nodename);
 
 my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
 $ua->agent($PROGNAME.' ');
@@ -169,6 +176,10 @@ Use SSL when connecting (default: false)
 =item -n | --node
 
 The node name (default is hostname)
+
+=item -r | --rname
+
+The rabbit name (default is rabbit)
 
 =item --username | --user
 

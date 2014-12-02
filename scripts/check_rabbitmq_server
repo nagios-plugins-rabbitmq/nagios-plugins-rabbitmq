@@ -90,6 +90,11 @@ $p->add_arg(spec => 'proxy|proxy!',
     default => 1
 );
 
+$p->add_arg(spec => 'rname|r=s',
+    help => "RabbitName (default: %s)",
+    default => "rabbit",
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -108,6 +113,8 @@ my $hostname = $p->opts->hostname;
 
 my $nodename = $p->opts->node;
 
+my $rname = $p->opts->rname;
+
 if (!$nodename) {
     $hostname =~ /^([a-zA-Z0-9-]*)/;
     $nodename = $1;
@@ -115,7 +122,8 @@ if (!$nodename) {
 
 my $port = $p->opts->port;
 
-my $path = "nodes/rabbit\@$nodename";
+my $path = "nodes/$rname\@$nodename";
+
 my $url = sprintf("http%s://%s:%d/api/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $path);
 
 my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
@@ -250,6 +258,10 @@ integers.  (default: 90,90,90,90)
 =item -n | --node
 
 The node name (default is hostname)
+
+=item -r | --rname
+
+The rabbit name (default is rabbit)
 
 =item --username | --user
 
