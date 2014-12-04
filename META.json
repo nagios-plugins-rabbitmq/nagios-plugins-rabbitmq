@@ -4,7 +4,7 @@
       "James Casey (jamesc.000@gmail.com)"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930",
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.133380",
    "license" : [
       "apache_2_0"
    ],
@@ -16,23 +16,23 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "Module::Build" : 0
+            "Module::Build" : "0"
          }
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : 0
+            "Module::Build" : "0"
          }
       },
       "runtime" : {
          "recommends" : {
-            "Nagios::Plugin" : "0.27"
+            "Nagios::Plugin" : "0.33"
          },
          "requires" : {
-            "Getopt::Long" : 0,
+            "Getopt::Long" : "0",
             "JSON" : "2.12",
-            "LWP::UserAgent" : 0,
-            "Pod::Usage" : 0,
+            "LWP::UserAgent" : "0",
+            "Pod::Usage" : "0",
             "URI" : "1.35"
          }
       }
@@ -43,5 +43,5 @@
          "http://apache.org/licenses/LICENSE-2.0"
       ]
    },
-   "version" : "v1.0.3"
+   "version" : "v2.0.1"
 }

@@ -6,7 +6,8 @@ build_requires:
   Module::Build: 0
 configure_requires:
   Module::Build: 0
-generated_by: 'Module::Build version 0.3603'
+dynamic_config: 1
+generated_by: 'Module::Build version 0.4003, CPAN::Meta::Converter version 2.133380'
 license: apache
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -22,4 +23,4 @@ requires:
   URI: 1.35
 resources:
   license: http://apache.org/licenses/LICENSE-2.0
-version: v1.1.0
+version: v2.0.1
