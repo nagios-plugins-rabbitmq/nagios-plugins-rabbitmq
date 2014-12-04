@@ -69,6 +69,9 @@ $p->add_arg(spec => 'proxy|proxy!',
     help => "Use environment proxy (default: true)",
     default => 1
 );
+$p->add_arg(spec => 'proxyurl=s',
+    help => "Use proxy url like http://proxy.domain.com:8080",
+);
 
 $p->add_arg(spec => 'rname|r=s',
     help => "RabbitName (default: %s)",
@@ -99,7 +102,15 @@ if (!$nodename) {
 
 my $url = sprintf("http%s://%s:%d/api/nodes/%s\@%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $rname, $nodename);
 
-my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
+my $ua = LWP::UserAgent->new;
+if (defined $p->opts->proxyurl)
+{
+        $ua->proxy('http', $p->opts->proxyurl);
+}
+elsif($p->opts->proxy == 1 )
+{
+        $ua->env_proxy;
+}
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
 $ua->credentials("$hostname:$port",
