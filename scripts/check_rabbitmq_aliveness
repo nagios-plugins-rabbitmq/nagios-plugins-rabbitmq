@@ -91,12 +91,8 @@ my $url = sprintf("http%s://%s:%d/api/aliveness-test/%s", ($p->opts->ssl ? "s" :
 my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
-# Different security domains in 2.5 and 2.6
-$ua->credentials("$hostname:$port",
-    "RabbitMQ Management", $p->opts->username, $p->opts->password);
-$ua->credentials("$hostname:$port",
-    "Management: Web UI", $p->opts->username, $p->opts->password);
 my $req = HTTP::Request->new(GET => $url);
+$req->authorization_basic($p->opts->username, $p->opts->password);
 my $res = $ua->request($req);
 
 if (!$res->is_success) {

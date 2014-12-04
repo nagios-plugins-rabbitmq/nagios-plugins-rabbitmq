@@ -121,12 +121,6 @@ my $queue=$p->opts->queue;
 my $ua = LWP::UserAgent->new(env_proxy => $p->opts->proxy);
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
-# Different security domains in 2.5 and 2.6
-$ua->credentials("$hostname:$port",
-    "Management: Web UI", $p->opts->username, $p->opts->password);
-$ua->credentials("$hostname:$port",
-    "RabbitMQ Management", $p->opts->username, $p->opts->password);
-
 
 my $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
 my ($retcode, $result) = request($url);
@@ -155,6 +149,7 @@ $p->nagios_exit(return_code => $code, message => $message);
 sub request {
     my ($url) = @_;
     my $req = HTTP::Request->new(GET => $url);
+    $req->authorization_basic($p->opts->username, $p->opts->password);
     my $res = $ua->request($req);
 
     if (!$res->is_success) {
