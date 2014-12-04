@@ -125,8 +125,6 @@ elsif($p->opts->proxy == 1 )
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
-$ua->credentials("$hostname:$port",
-    "RabbitMQ Management", $p->opts->username, $p->opts->password);
 
 my $url = sprintf("http%s://%s:%d/api/connections", ($p->opts->ssl ? "s" : ""), $hostname, $port);
 my ($retcode, $result) = request($url);
@@ -170,6 +168,7 @@ $p->nagios_exit(return_code => $code, message => $message);
 sub request {
     my ($url) = @_;
     my $req = HTTP::Request->new(GET => $url);
+    $req->authorization_basic($p->opts->username, $p->opts->password);
     my $res = $ua->request($req);
 
     if (!$res->is_success) {
