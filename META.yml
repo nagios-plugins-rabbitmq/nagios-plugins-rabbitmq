@@ -6,14 +6,15 @@ build_requires:
   Module::Build: 0
 configure_requires:
   Module::Build: 0
-generated_by: 'Module::Build version 0.3603'
+dynamic_config: 1
+generated_by: 'Module::Build version 0.4003, CPAN::Meta::Converter version 2.133380'
 license: apache
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: nagios-plugins-rabbitmq
 recommends:
-  Nagios::Plugin: 0.33
+  Monitoring::Plugin: 0.37
 requires:
   Getopt::Long: 0
   JSON: 2.12
@@ -22,4 +23,4 @@ requires:
   URI: 1.35
 resources:
   license: http://apache.org/licenses/LICENSE-2.0
-version: v1.1.0
+version: v2.0.1
