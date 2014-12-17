@@ -24,6 +24,7 @@ etc/nagios/nrpe.d/check_rabbitmq_server.cfg
 etc/nagios/nrpe.d/check_rabbitmq_shovels.cfg
 etc/nagios/nrpe.d/check_rabbitmq_watermark.cfg
 scripts/check_rabbitmq_aliveness
+scripts/check_rabbitmq_cluster
 scripts/check_rabbitmq_connections
 scripts/check_rabbitmq_objects
 scripts/check_rabbitmq_overview
