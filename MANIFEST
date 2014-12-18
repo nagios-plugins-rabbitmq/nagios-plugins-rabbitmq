@@ -9,6 +9,7 @@ etc/nagios-plugins/config/check_rabbitmq_aliveness.cfg
 etc/nagios-plugins/config/check_rabbitmq_connections.cfg
 etc/nagios-plugins/config/check_rabbitmq_objects.cfg
 etc/nagios-plugins/config/check_rabbitmq_overview.cfg
+etc/nagios-plugins/config/check_rabbitmq_culster.cfg
 etc/nagios-plugins/config/check_rabbitmq_partition.cfg
 etc/nagios-plugins/config/check_rabbitmq_queue.cfg
 etc/nagios-plugins/config/check_rabbitmq_server.cfg
@@ -18,6 +19,7 @@ etc/nagios/nrpe.d/check_rabbitmq_aliveness.cfg
 etc/nagios/nrpe.d/check_rabbitmq_connections.cfg
 etc/nagios/nrpe.d/check_rabbitmq_objects.cfg
 etc/nagios/nrpe.d/check_rabbitmq_overview.cfg
+etc/nagios/nrpe.d/check_rabbitmq_cluster.cfg
 etc/nagios/nrpe.d/check_rabbitmq_partition.cfg
 etc/nagios/nrpe.d/check_rabbitmq_queue.cfg
 etc/nagios/nrpe.d/check_rabbitmq_server.cfg
