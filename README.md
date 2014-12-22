@@ -37,6 +37,9 @@ Currently we have the following checks:
 - check\_rabbitmq\_partition
   - Use the `/api/nodes` API to check for partitions in a RabbitMQ cluster.
 
+- check\_rabbitmq\_cluster
+  - Use the `/api/nodes` API to check how many node are alived in the cluster.
+
 - check\_rabbitmq\_queue
   - Use the `/api/queue` API to collect the number of pending, ready and
     unacknowledged messages and the number of consumers on a given queue

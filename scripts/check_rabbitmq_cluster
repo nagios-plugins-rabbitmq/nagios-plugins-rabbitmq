@@ -1,14 +1,9 @@
 #!/usr/bin/env perl
+#
+# check_rabbitmq_cluster
+#
+# Use the management API to check how many node are alived in the cluster.
 
-###  check_rabbitmq_aliveness.pl
-
-# Use the management aliveness-check to send/receive a message through a vhost
-
-# Originally by Nathan Vonnahme, n8v at users dot sourceforge
-# dot net, July 19 2006
-
-##############################################################################
-# prologue
 use strict;
 use warnings;
 
@@ -36,13 +31,14 @@ my $p = Monitoring::Plugin->new(
     usage => "Usage: %s [options] -H hostname",
     license => "",
     version => $VERSION,
-    blurb => 'This plugin uses the RabbitMQ management aliveness-check to send/receive a message through a vhost.',
+    blurb => 'This plugin uses the RabbitMQ management API to check how many node are in the cluster',
 );
 
 $p->add_arg(spec => 'hostname|host|H=s',
     help => "Specify the host to connect to",
     required => 1
 );
+
 $p->add_arg(spec => 'port=i',
     help => "Specify the port to connect to (default: %s)",
     default => 15672
@@ -52,14 +48,10 @@ $p->add_arg(spec => 'username|user|u=s',
     help => "Username (default: %s)",
     default => "guest",
 );
+
 $p->add_arg(spec => 'password|p=s',
     help => "Password (default: %s)",
     default => "guest"
-);
-
-$p->add_arg(spec => 'vhost=s',
-    help => "Specify the vhost to test (default: %s)",
-    default => "/"
 );
 
 $p->add_arg(spec => 'ssl|ssl!',
@@ -71,25 +63,34 @@ $p->add_arg(spec => 'proxy|proxy!',
     help => "Use environment proxy",
     default => 0
 );
+
 $p->add_arg(spec => 'proxyurl=s',
-help => "Use proxy url like http://proxy.domain.com:8080",
+    help => "Use proxy url like http://proxy.domain.com:8080",
+);
+
+$p->add_arg(
+    spec => 'warning|w=i',
+    help =>
+qq{-w, --warning=THRESHOLD
+   Warning thresholds specified in order that the metrics are returned.
+   Specify -1 if no warning threshold.},
+);
+
+$p->add_arg(
+    spec => 'critical|c=i',
+    help =>
+qq{-c, --critical=THRESHOLD
+   Critical thresholds specified in order that the metrics are returned.
+   Specify -1 if no critical threshold.},
 );
 
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
-
-# perform sanity checking on command line options
-
-
-##############################################################################
-# check stuff.
-
 my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
-my $vhost=uri_escape($p->opts->vhost);
 
-my $url = sprintf("http%s://%s:%d/api/aliveness-test/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
+my $url = sprintf("http%s://%s:%d/api/nodes", ($p->opts->ssl ? "s" : ""), $hostname, $port);
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
 {
@@ -112,34 +113,42 @@ if (!$res->is_success) {
         my $bodyref = decode_json $res->content;
         $p->nagios_exit(CRITICAL, $bodyref->{'reason'});
     }
-    $res->code == 404 and $p->nagios_die("Not found: ".$p->opts->vhost);
-    $res->code == 401 and $p->nagios_die("Access refused: ".$p->opts->vhost);
+    $res->code == 404 and $p->nagios_die("Not found");
+    $res->code == 401 and $p->nagios_die("Access refused");
     if ($res->code < 200 or $res->code > 400 ) {
-        $p->nagios_exit(CRITICAL, "Received ".$res->status_line." for vhost: ".$p->opts->vhost);
+        $p->nagios_exit(CRITICAL, "Received ".$res->status_line);
     }
 }
 
-my $bodyref = decode_json $res->content;
-$bodyref->{'status'} eq "ok" or $p->nagios_exit(CRITICAL, $res->content);
-my($code, $message) = (OK, "vhost: ".$p->opts->vhost);
-$p->nagios_exit(
-    return_code => $code,
-    message => $message
-);
+my @nodes = @{ decode_json $res->content };
+my $count = 0;
+foreach my $node ( @nodes ) {
+  if ($node->{"name"} && $node->{"running"}) {
+    $count++;
+  }
+}
+
+if ($p->opts->critical && $count <= $p->opts->critical) {
+    $p->nagios_exit( CRITICAL, "The cluster has $count nodes" );
+}
+
+if ($p->opts->warning && $count <= $p->opts->warning) {
+    $p->nagios_exit( WARNING, "The cluster has $count nodes" );
+}
+
+$p->nagios_exit( OK, "The cluster has $count nodes" );
 
 =head1 NAME
 
-check_rabbitmq_aliveness - Nagios plugin using RabbitMQ management API to
-check liveness by send/receive a message through a vhost
+check_rabbitmq_cluster - Nagios plugin using RabbitMQ management API to check how many node are alived in the cluster
 
 =head1 SYNOPSIS
 
-check_rabbitmq_aliveness [options] -H hostname
+check_rabbitmq_partition [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to check that the server is alive.
-It declares a test queue, then publishes and consumes a message.
+Use the management interface of RabbitMQ to check if a cluster partition has occured.
 
 It uses Monitoring::Plugin and accepts all standard Nagios options.
 
@@ -171,10 +180,6 @@ The port to connect to (default: 15672)
 
 Use SSL when connecting (default: false)
 
-=item --vhost
-
-The vhost to create the test queue within (default: /)
-
 =item --username | --user
 
 The user to connect as (default: guest)
@@ -190,15 +195,11 @@ The password for the user (default: guest)
 The defaults all work with a standard fresh install of RabbitMQ, and all that
 is needed is to specify the host to connect to:
 
-    check_rabbitmq_aliveness -H rabbit.example.com
+    check_rabbitmq_node -H rabbit.example.com
 
 This returns a standard Nagios result:
 
-    RABBITMQ_ALIVENESS OK - vhost: /
-
-You can choose a different vhost to use for the check also:
-
-    check_rabbitmq_aliveness -H rabbit.example.com --vhost /foo
+    RABBITMQ_NODE OK - No Partitions
 
 =head1 ERRORS
 
@@ -240,7 +241,7 @@ limitations under the License.
 
 =head1 AUTHOR
 
-James Casey <jamesc.000@gmail.com>
+Thierno IB. BARRY
 
 =cut
 
