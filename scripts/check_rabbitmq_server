@@ -86,8 +86,8 @@ $p->add_arg(spec => 'ssl|ssl!',
 );
 
 $p->add_arg(spec => 'proxy|proxy!',
-    help => "Use environment proxy (default: true)",
-    default => 1
+    help => "Use environment proxy",
+    default => 0
 );
 $p->add_arg(spec => 'proxyurl=s',
     help => "Use proxy url like http://proxy.domain.com:8080",
@@ -132,11 +132,11 @@ my $url = sprintf("http%s://%s:%d/api/%s", ($p->opts->ssl ? "s" : ""), $hostname
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
 {
-        $ua->proxy('http', $p->opts->proxyurl);
+    $ua->proxy('http', $p->opts->proxyurl);
 }
-elsif($p->opts->proxy == 1 )
+elsif($p->opts->proxy)
 {
-        $ua->env_proxy;
+    $ua->env_proxy;
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
