@@ -107,7 +107,7 @@ elsif($p->opts->proxy == 1 )
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
-if ($p->opts->ssl) {
+if ($p->opts->ssl and $ua->can('ssl_opts')) {
     $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
 }
 my $req = HTTP::Request->new(GET => $url);
