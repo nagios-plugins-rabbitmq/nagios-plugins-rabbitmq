@@ -11,6 +11,7 @@ etc/nagios-plugins/config/check_rabbitmq_objects.cfg
 etc/nagios-plugins/config/check_rabbitmq_overview.cfg
 etc/nagios-plugins/config/check_rabbitmq_partition.cfg
 etc/nagios-plugins/config/check_rabbitmq_queue.cfg
+etc/nagios-plugins/config/check_rabbitmq_queues.cfg
 etc/nagios-plugins/config/check_rabbitmq_server.cfg
 etc/nagios-plugins/config/check_rabbitmq_shovels.cfg
 etc/nagios-plugins/config/check_rabbitmq_watermark.cfg
@@ -20,6 +21,7 @@ etc/nagios/nrpe.d/check_rabbitmq_objects.cfg
 etc/nagios/nrpe.d/check_rabbitmq_overview.cfg
 etc/nagios/nrpe.d/check_rabbitmq_partition.cfg
 etc/nagios/nrpe.d/check_rabbitmq_queue.cfg
+etc/nagios/nrpe.d/check_rabbitmq_queues.cfg
 etc/nagios/nrpe.d/check_rabbitmq_server.cfg
 etc/nagios/nrpe.d/check_rabbitmq_shovels.cfg
 etc/nagios/nrpe.d/check_rabbitmq_watermark.cfg
@@ -31,4 +33,5 @@ scripts/check_rabbitmq_partition
 scripts/check_rabbitmq_shovels
 scripts/check_rabbitmq_server
 scripts/check_rabbitmq_queue
+scripts/check_rabbitmq_queues
 scripts/check_rabbitmq_watermark
