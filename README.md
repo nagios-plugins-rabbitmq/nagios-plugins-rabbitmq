@@ -41,6 +41,9 @@ Currently we have the following checks:
   - Use the `/api/queue` API to collect the number of pending, ready and
     unacknowledged messages and the number of consumers on a given queue
 
+- check\_rabbitmq\_queues
+  - Use the `/api/queues` API to gather the number of queues and their state.
+
 - check\_rabbitmq\_server
   - Use the `/api/nodes` API to gather resource usage of the rabbitmq server
     node
