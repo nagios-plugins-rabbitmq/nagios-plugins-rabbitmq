@@ -141,8 +141,6 @@ if ($retcode != 200) {
 my $values = {};
 $values->{'queues'} = 0;
 $values->{'queues_notrunning'} = 0;
-$values->{'receive_rate'} = 0;
-$values->{'send_rate'} = 0;
 
 for my $queue (@$result) {
     if (not defined($p->opts->clientuser) or $p->opts->clientuser eq $queue->{"name"}) {
@@ -289,8 +287,8 @@ is needed is to specify the host to connect to:
 This returns a standard Nagios result:
 
   RABBITMQ_QUEUES CRITICAL - queues CRITICAL (0),
-    queues_notrunning WARNING (0), receive_rate OK (0) send_rate OK (0) |
-    queues=0;;1: queues_notrunning=0;1:; receive_rate=0;; send_rate=0;;
+    queues_notrunning WARNING (0) |
+    queues=0;;1: queues_notrunning=0;1:;
 
 =head1 ERRORS
 
