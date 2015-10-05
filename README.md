@@ -25,6 +25,10 @@ Currently we have the following checks:
   - Use the `/api/connections` API to gather details of connections used,
     their state and their throughput
 
+- check\_rabbitmq\_exchange
+  - Use the `/api/exchanges` API to collect average rates of confirmed, published in and published out
+    messages/second in a period of time on a given exchange.
+
 - check\_rabbitmq\_objects
   - Use a variety of APIs to count instances of various objects on the
     server. These include vhosts, exchanges, bindings, queues and
