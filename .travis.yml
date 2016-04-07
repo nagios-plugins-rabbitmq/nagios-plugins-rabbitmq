@@ -2,11 +2,29 @@ language: perl
 
 perl:
   - "5.22"
-  - "5.20"
-  - "5.18"
-  - "5.16"
-  - "5.14"
 
 services:
   - rabbitmq
-  
+
+install:
+  - cpanm -n -q Test::More Test::Script
+  - perl Build.PL && yes "" | ./Build installdeps
+  - sudo rabbitmq-plugins enable rabbitmq_management
+
+before_script:
+  - 'sudo RABBITMQ_NODE_PORT=5673 RABBITMQ_SERVER_START_ARGS="-rabbitmq_management listener [{port,15673}]" RABBITMQ_NODENAME=hare rabbitmq-server -detached'
+
+addons:
+  hosts:
+    - rabbit
+    - hare
+
+env:
+  - RABBIT_HOSTNAME=127.0.0.1
+  - RABBIT_USERNAME=guest
+  - RABBIT_PASSWORD=guest
+  - RABBIT_VHOST=%2F
+  - RABBIT_1_RNAME=rabbit
+  - RABBIT_1_MGT_PORT=15672
+  - RABBIT_2_RNAME=hare
+  - RABBIT_2_MGT_PORT=15673
