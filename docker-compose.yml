@@ -1,0 +1,31 @@
+rabbit:
+  image: "nagios-rabbit"
+  name: rabbit
+  ports:
+   - "15672:15672"
+  volumes:
+   - .:/nagios-plugins-rabbitmq
+  command: rabbitmq-server
+  environment:
+    - RABBIT_HOSTNAME=127.0.0.1
+    - RABBIT_MGT_PORT=15672
+    - RABBIT_USERNAME=guest
+    - RABBIT_PASSWORD=guest
+    - RABBIT_VHOST=%2F
+
+hare:
+  image: "nagios-rabbit"
+  name: hare
+  ports:
+   - "15673:15672"
+  volumes:
+   - .:/nagios-plugins-rabbitmq
+  links:
+   - rabbit:rabbit
+  command: rabbitmq-server
+  environment:
+    - RABBIT_HOSTNAME=127.0.0.1
+    - RABBIT_MGT_PORT=15672
+    - RABBIT_USERNAME=guest
+    - RABBIT_PASSWORD=guest
+    - RABBIT_VHOST=%2F

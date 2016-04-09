@@ -20,11 +20,12 @@ addons:
     - hare
 
 env:
-  - RABBIT_HOSTNAME=127.0.0.1
-  - RABBIT_USERNAME=guest
-  - RABBIT_PASSWORD=guest
-  - RABBIT_VHOST=%2F
-  - RABBIT_1_RNAME=rabbit
-  - RABBIT_1_MGT_PORT=15672
-  - RABBIT_2_RNAME=hare
-  - RABBIT_2_MGT_PORT=15673
+  global:
+    - RABBIT_HOSTNAME=127.0.0.1
+    - RABBIT_USERNAME=guest
+    - RABBIT_PASSWORD=guest
+    - RABBIT_VHOST=%2F
+    - RABBIT_1_RNAME=rabbit
+    - RABBIT_1_MGT_PORT=15672
+    - RABBIT_2_RNAME=hare
+    - RABBIT_2_MGT_PORT=15673
