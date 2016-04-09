@@ -1,26 +1,27 @@
 ---
 abstract: 'Nagios checks for RabbitMQ using the management interface'
 author:
-  - 'James Casey (jamesc.000@gmail.com)'
+  - 'James Casey <jamesc.000@gmail.com>'
+  - 'Thierno IB. BARRY <ibrahima.br@gmail.com>'
 build_requires:
-  Module::Build: 0
+  Module::Build: '0'
 configure_requires:
-  Module::Build: 0
+  Module::Build: '0'
 dynamic_config: 1
-generated_by: 'Module::Build version 0.4003, CPAN::Meta::Converter version 2.133380'
+generated_by: 'Module::Build version 0.4216, CPAN::Meta::Converter version 2.150005'
 license: apache
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
+  version: '1.4'
 name: nagios-plugins-rabbitmq
-recommends:
-  Monitoring::Plugin: 0.37
 requires:
-  Getopt::Long: 0
-  JSON: 2.12
-  LWP::UserAgent: 0
-  Pod::Usage: 0
-  URI: 1.35
+  Getopt::Long: '0'
+  JSON: '2.12'
+  LWP::UserAgent: '0'
+  Monitoring::Plugin: '0'
+  Pod::Usage: '0'
+  URI: '1.35'
 resources:
-  license: http://apache.org/licenses/LICENSE-2.0
-version: v2.0.2
+  license: http://www.apache.org/licenses/LICENSE-2.0.txt
+version: v2.0.3
+x_serialization_backend: 'CPAN::Meta::YAML version 0.012'
