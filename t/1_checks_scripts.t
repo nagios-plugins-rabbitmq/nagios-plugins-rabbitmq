@@ -33,9 +33,8 @@ script_runs(['scripts/check_rabbitmq_partition', ($args, "--node=${rabbit_server
 script_runs(['scripts/check_rabbitmq_queue', ($args, '--queue=aliveness-test')]);
 
 # Checks on check_rabbitmq_server
-%options = (exit => 2);
 $regex = /(Memory=.*)\s(Process=.*)\s(FD=.*)/im;
-script_runs(['scripts/check_rabbitmq_server', ($args, "--node=${rabbit_servername}")], \%options);
+script_runs(['scripts/check_rabbitmq_server', ($args, "--node=${rabbit_servername}")]);
 script_stdout_like $regex, 'scripts/check_rabbitmq_server stdout is correct';
 
 # Checks on check_rabbitmq_watermark

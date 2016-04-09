@@ -12,7 +12,6 @@ services:
 
 install:
   - sudo rabbitmq-plugins enable rabbitmq_management
-  - sudo service rabbitmq-server restart
   - cpanm -n -q Test::More Test::Script
   - perl Build.PL && yes "" | ./Build installdeps
 
