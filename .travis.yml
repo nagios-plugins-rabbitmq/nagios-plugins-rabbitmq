@@ -17,7 +17,7 @@ services:
 install:
   - sudo rabbitmq-plugins enable rabbitmq_management
   - cpanm -n -q Test::More Test::Script
-  - perl Build.PL && yes "" | ./Build installdeps
+  - perl Build.PL && yes "" | ./Build installdeps --cpan_client 'cpanm -n -q'
 
 env:
   global:
