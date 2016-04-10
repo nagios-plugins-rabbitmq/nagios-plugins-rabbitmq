@@ -89,4 +89,3 @@ Author
 ------
 
 James Casey <jamesc.000@gmail.com>, Thierno IB. BARRY [@barryib](https://github.com/barryib)
-
