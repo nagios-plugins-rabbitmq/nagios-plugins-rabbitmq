@@ -1,6 +1,8 @@
 nagios-plugins-rabbitmq
 =======================
 
+[![Build Status](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg?branch=master)](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq)
+
 Overview
 --------
 This package contains a set of nagios checks useful for monitoring a
@@ -79,3 +81,8 @@ Author
 ------
 
 James Casey <jamesc.000@gmail.com>
+
+
+Maintainers
+-----------
+Thierno IB. BARRY <ibrahima.br@gmail.com>

@@ -35,3 +35,5 @@ scripts/check_rabbitmq_shovels
 scripts/check_rabbitmq_server
 scripts/check_rabbitmq_queue
 scripts/check_rabbitmq_watermark
+t/0_compile_scripts.t
+t/1_checks_scripts.t

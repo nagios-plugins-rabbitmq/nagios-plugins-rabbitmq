@@ -1,0 +1,32 @@
+language: perl
+
+perl:
+  - "5.22"
+  - "5.20"
+  - "5.18"
+  - "5.16"
+  - "5.14"
+
+addons:
+  hosts:
+    - rabbit
+
+services:
+  - rabbitmq
+
+install:
+  - sudo rabbitmq-plugins enable rabbitmq_management
+  - cpanm -n -q Test::More Test::Script
+  - perl Build.PL && yes "" | ./Build installdeps
+
+env:
+  global:
+    - RABBIT_HOSTNAME=127.0.0.1
+    - RABBIT_USERNAME=guest
+    - RABBIT_PASSWORD=guest
+    - RABBIT_SERVERNAME="localhost"
+    - RABBIT_1_RNAME=rabbit
+    - RABBIT_1_MGT_PORT=15672
+
+script:
+  - ./Build test --verbose=1

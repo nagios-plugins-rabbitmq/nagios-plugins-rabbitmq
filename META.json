@@ -1,10 +1,11 @@
 {
    "abstract" : "Nagios checks for RabbitMQ using the management interface",
    "author" : [
-      "James Casey (jamesc.000@gmail.com)"
+      "James Casey <jamesc.000@gmail.com>",
+      "Thierno IB. BARRY <ibrahima.br@gmail.com>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.133380",
+   "generated_by" : "Module::Build version 0.4216",
    "license" : [
       "apache_2_0"
    ],
@@ -25,13 +26,11 @@
          }
       },
       "runtime" : {
-         "recommends" : {
-            "Monitoring::Plugin" : "0.37"
-         },
          "requires" : {
             "Getopt::Long" : "0",
             "JSON" : "2.12",
             "LWP::UserAgent" : "0",
+            "Monitoring::Plugin" : "0",
             "Pod::Usage" : "0",
             "URI" : "1.35"
          }
@@ -40,8 +39,9 @@
    "release_status" : "stable",
    "resources" : {
       "license" : [
-         "http://apache.org/licenses/LICENSE-2.0"
+         "http://www.apache.org/licenses/LICENSE-2.0.txt"
       ]
    },
-   "version" : "v2.0.2"
+   "version" : "v2.0.3",
+   "x_serialization_backend" : "JSON::PP version 2.27203"
 }

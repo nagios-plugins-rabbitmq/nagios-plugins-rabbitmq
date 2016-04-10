@@ -1,3 +1,6 @@
+# Avoid travis-ci
+.travis.yml
+
 # Avoid version control files.
 \bRCS\b
 \bCVS\b
