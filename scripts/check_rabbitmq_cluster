@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 
-use Monitoring::Plugin ;
+use Monitoring::Plugin;
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
@@ -144,7 +144,7 @@ check_rabbitmq_cluster - Nagios plugin using RabbitMQ management API to check ho
 
 =head1 SYNOPSIS
 
-check_rabbitmq_partition [options] -H hostname
+check_rabbitmq_cluster [options] -H hostname
 
 =head1 DESCRIPTION
 
@@ -184,7 +184,7 @@ Use SSL when connecting (default: false)
 
 The user to connect as (default: guest)
 
-=item --pass
+=item -p | --password
 
 The password for the user (default: guest)
 
@@ -195,11 +195,11 @@ The password for the user (default: guest)
 The defaults all work with a standard fresh install of RabbitMQ, and all that
 is needed is to specify the host to connect to:
 
-    check_rabbitmq_node -H rabbit.example.com
+    check_rabbitmq_cluster -H rabbit.example.com
 
 This returns a standard Nagios result:
 
-    RABBITMQ_NODE OK - No Partitions
+    RABBITMQ_NODE OK - The cluster has 3 nodes
 
 =head1 ERRORS
 

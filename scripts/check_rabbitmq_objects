@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use Monitoring::Plugin ;
+use Monitoring::Plugin;
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
