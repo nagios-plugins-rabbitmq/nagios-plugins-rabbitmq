@@ -80,9 +80,5 @@ limitations under the License.
 Author
 ------
 
-James Casey <jamesc.000@gmail.com>
+James Casey <jamesc.000@gmail.com>, Thierno IB. BARRY [@barryib](https://github.com/barryib)
 
-
-Maintainers
------------
-Thierno IB. BARRY <ibrahima.br@gmail.com>
