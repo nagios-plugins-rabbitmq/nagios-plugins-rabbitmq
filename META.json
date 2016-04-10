@@ -26,11 +26,13 @@
          }
       },
       "runtime" : {
+         "recommends" : {
+            "Monitoring::Plugin" : "0"
+         },
          "requires" : {
             "Getopt::Long" : "0",
             "JSON" : "2.12",
             "LWP::UserAgent" : "0",
-            "Monitoring::Plugin" : "0",
             "Pod::Usage" : "0",
             "URI" : "1.35"
          }
