@@ -18,9 +18,12 @@ my $build = Module::Build->new (
     "JSON" => "2.12",
     "LWP::UserAgent" => 0,
     "URI" => "1.35",
-    "Monitoring::Plugin" => 0,
     "Pod::Usage" => 0,
     "Getopt::Long" => 0,
+  },
+
+  recommends => {
+    "Nagios::Plugin" => 0,
   },
 
   configure_requires => {

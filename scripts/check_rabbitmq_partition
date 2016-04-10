@@ -13,7 +13,7 @@
 use strict;
 use warnings;
 
-use Monitoring::Plugin ;
+use Nagios::Plugin;
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
@@ -32,8 +32,8 @@ $PROGNAME = basename($0);
 #   http://nagiosplug.sourceforge.net/developer-guidelines.html#PLUGOPTIONS
 
 
-# Instantiate Monitoring::Plugin object (the 'usage' parameter is mandatory)
-my $p = Monitoring::Plugin->new(
+# Instantiate Nagios::Plugin object (the 'usage' parameter is mandatory)
+my $p = Nagios::Plugin->new(
     usage => "Usage: %s [options] -H hostname",
     license => "",
     version => $VERSION,
@@ -162,7 +162,7 @@ check_rabbitmq_partition [options] -H hostname
 
 Use the management interface of RabbitMQ to check if a cluster partition has occured.
 
-It uses Monitoring::Plugin and accepts all standard Nagios options.
+It uses Nagios::Plugin and accepts all standard Nagios options.
 
 =head1 OPTIONS
 
@@ -236,7 +236,7 @@ signify WARNING, UNKNOWN or CRITICAL state.
 
 =head1 SEE ALSO
 
-See Monitoring::Plugin(3)
+See Nagios::Plugin(3)
 
 The RabbitMQ management plugin is described at
 http://www.rabbitmq.com/management.html

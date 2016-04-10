@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use Monitoring::Plugin ;
+use Nagios::Plugin;
 use LWP::UserAgent;
 use URI::Escape;
 use JSON;
@@ -20,7 +20,7 @@ $VERSION = '1.0';
 use File::Basename;
 $PROGNAME = basename($0);
 
-my $p = Monitoring::Plugin->new(
+my $p = Nagios::Plugin->new(
     usage => "Usage: %s [options] -H hostname",
     license => "",
     version => $VERSION,
@@ -162,7 +162,7 @@ Currently the following objects are counted:
 
 =back
 
-It uses Monitoring::Plugin and accepts all standard Nagios options.
+It uses Nagios::Plugin and accepts all standard Nagios options.
 
 =head1 OPTIONS
 
@@ -229,7 +229,7 @@ signify WARNING, UNKNOWN or CRITICAL state.
 
 =head1 SEE ALSO
 
-See Monitoring::Plugin(3)
+See Nagios::Plugin(3)
 
 The RabbitMQ management plugin is described at
 http://www.rabbitmq.com/management.html

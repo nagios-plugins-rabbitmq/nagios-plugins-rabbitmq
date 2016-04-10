@@ -16,11 +16,13 @@ services:
 
 install:
   - sudo rabbitmq-plugins enable rabbitmq_management
+  - sudo apt-get update && sudo apt-get install -y libnagios-plugin-perl
   - cpanm -n -q Test::More Test::Script
-  - perl Build.PL && yes "" | ./Build installdeps
+  - perl Build.PL && yes "" | ./Build installdeps --cpan_client 'cpanm -n -q'
 
 env:
   global:
+    - PERL5LIB="$PERL5LIB:/usr/share/perl5"
     - RABBIT_HOSTNAME=127.0.0.1
     - RABBIT_USERNAME=guest
     - RABBIT_PASSWORD=guest

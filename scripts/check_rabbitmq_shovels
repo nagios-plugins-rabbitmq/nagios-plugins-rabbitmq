@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use JSON -support_by_pp;
 use LWP::UserAgent;
-use Monitoring::Plugin;
+use Nagios::Plugin;
 
 
 $::PROGRAM = "check_rabbitmq_shovels";
@@ -22,7 +22,7 @@ MAIN: {
 # run()
 # ---
 sub run {
-    my $np = Monitoring::Plugin->new(
+    my $np = Nagios::Plugin->new(
         plugin  => $::PROGRAM,
         version => $::VERSION,
         blurb   => "check that all the shovels of the given RabbitMQ host "
@@ -234,7 +234,7 @@ diagnostic:
 
 =head1 SEE ALSO
 
-See L<Monitoring::Plugin>
+See L<Nagios::Plugin>
 
 The RabbitMQ management plugin is described at
 L<http://www.rabbitmq.com/management.html>
