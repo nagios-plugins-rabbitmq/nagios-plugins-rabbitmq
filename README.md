@@ -1,6 +1,6 @@
 nagios-plugins-rabbitmq
 =======================
-[![Build Status](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg?branch=master)](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq) &nbsp;&nbsp;  [![Join the chat at https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq](https://badges.gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg)](https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html) &nbsp; [![Build Status](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg?branch=master)](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq) &nbsp; [![Join the chat at https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq](https://badges.gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg)](https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Overview
 --------
