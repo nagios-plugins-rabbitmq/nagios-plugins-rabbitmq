@@ -20,7 +20,7 @@ $VERSION = '1.0';
 use File::Basename;
 $PROGNAME = basename($0);
 
-my $p = Nagios::Plugin->new(
+my $p = Monitoring::Plugin->new(
     usage => "Usage: %s [options] -H hostname --queue queue",
     license => "",
     version => $VERSION,
@@ -50,13 +50,13 @@ $p->add_arg(spec => 'vhost=s',
     default => "/"
 );
 $p->add_arg(spec => 'queue=s',
-    help => "Specify the queue to check",
-    required => 1
+    help => "Specify the queue to check (default: %s)",
+    default => "all"
 );
 
-$p->add_arg(spec => 'exclude=s',
-    help => "Specify the queues to exclude from the check",
-    required => 0
+$p->add_arg(spec => 'filter=s',
+    help => "Specify the queues to filter for the check. It's a perl regex (default: %s)",
+    default => ".*"
 );
 
 
@@ -130,16 +130,16 @@ my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 my $vhost=uri_escape($p->opts->vhost);
 my $queue=$p->opts->queue;
-my $q_exclude=$p->opts->exclude;
+my $filter=$p->opts->filter;
 
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
 {
-        $ua->proxy('http', $p->opts->proxyurl);
+    $ua->proxy('http', $p->opts->proxyurl);
 }
 elsif($p->opts->proxy == 1 )
 {
-        $ua->env_proxy;
+    $ua->env_proxy;
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
@@ -161,8 +161,6 @@ if ($retcode != 200) {
 my @values = ();
 my @metrics = ("messages", "messages_ready", "messages_unacknowledged", "consumers");
 
-my @q_exclude = ();
-@q_exclude = split /,/,$q_exclude if defined $q_exclude && $q_exclude ne "";
 for my $metric (@metrics) {
     my $warning = undef;
     $warning = $warning{$metric} if (defined $warning{$metric} and $warning{$metric} ne -1);
@@ -170,15 +168,21 @@ for my $metric (@metrics) {
     $critical = $critical{$metric} if (defined $critical{$metric} and $critical{$metric} ne -1);
     if(ref($result) eq 'ARRAY'){
         my $message = "";
-        foreach my $queue (@$result){
-            my $q_name = $queue->{name};
-            next if grep {$_ eq $q_name } @q_exclude;
+        my $nb_matched_queues = 0;
+        my $sum_metric_value = 0;
+        for my $queue (@$result){
+            next if $queue->{name} !~ /$filter/i;
             my $value = 0;
             $value = $queue->{$metric} if defined $queue->{$metric};
             my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
             push @values, $code;
-            $p->add_message($code, sprintf("$q_name : $metric ".$STATUS_TEXT{$code}." (%d)", $value))  unless $code == 0;
+            
+            $nb_matched_queues++;
+            $sum_metric_value += $value;
+            
+            $p->add_message($code, sprintf("$queue->{name} : $metric ".$STATUS_TEXT{$code}." (%d)", $value)) unless $code == 0;
         }
+        $p->add_perfdata(label=>$metric, value=>sprintf("%.4f", $sum_metric_value/$nb_matched_queues), warning=>$warning, critical=> $critical);
     } else{
         my $value = 0;
         $value = $result->{$metric} if defined $result->{$metric};
@@ -228,7 +232,7 @@ count the messages pending and consumers on a given queue
 
 =head1 SYNOPSIS
 
-check_rabbitmq_overview [options] -H hostname --queue queue
+check_rabbitmq_queue [options] -H hostname --queue queue
 
 =head1 DESCRIPTION
 
@@ -238,7 +242,7 @@ published as performance metrics for the check.
 
 Critical and warning thresholds can be set for each of the metrics.
 
-It uses Nagios::Plugin and accepts all standard Nagios options.
+It uses Monitoring::Plugin and accepts all standard Nagios options.
 
 =head1 OPTIONS
 
@@ -272,7 +276,7 @@ Use SSL when connecting (default: false)
 
 The user to connect as (default: guest)
 
-=item --pass
+=item --password | -p
 
 The password for the user (default: guest)
 
@@ -330,7 +334,7 @@ signify WARNING, UNKNOWN or CRITICAL state.
 
 =head1 SEE ALSO
 
-See Nagios::Plugin(3)
+See Monitoring::Plugin(3)
 
 The RabbitMQ management plugin is described at
 http://www.rabbitmq.com/management.html
