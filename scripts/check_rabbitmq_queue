@@ -50,8 +50,13 @@ $p->add_arg(spec => 'vhost=s',
     default => "/"
 );
 $p->add_arg(spec => 'queue=s',
-    help => "Specify the queue to check",
-    required => 1
+    help => "Specify the queue to check (default: %s)",
+    default => "all"
+);
+
+$p->add_arg(spec => 'filter=s',
+    help => "Specify the queues to filter from the check (default: %s)",
+    default => ".*"
 );
 
 
@@ -125,43 +130,74 @@ my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 my $vhost=uri_escape($p->opts->vhost);
 my $queue=$p->opts->queue;
+my $filter=$p->opts->filter;
 
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
 {
-        $ua->proxy('http', $p->opts->proxyurl);
+    $ua->proxy('http', $p->opts->proxyurl);
 }
 elsif($p->opts->proxy == 1 )
 {
-        $ua->env_proxy;
+    $ua->env_proxy;
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
-if ($p->opts->ssl and $ua->can('ssl_opts')) {
+if ($p->opts->ssl) {
     $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
 }
 
-my $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
+my $url = "";
+if ($queue eq "all"){
+    $url = sprintf("http%s://%s:%d/api/queues/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
+} else{
+    $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
+}
 my ($retcode, $result) = request($url);
 if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : $url");
 }
 
+my @values = ();
 my @metrics = ("messages", "messages_ready", "messages_unacknowledged", "consumers");
+
 for my $metric (@metrics) {
     my $warning = undef;
     $warning = $warning{$metric} if (defined $warning{$metric} and $warning{$metric} ne -1);
     my $critical = undef;
     $critical = $critical{$metric} if (defined $critical{$metric} and $critical{$metric} ne -1);
-
-    my $value = 0;
-    $value = $result->{$metric} if defined $result->{$metric};
-    my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
-    $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
-    $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
+    if(ref($result) eq 'ARRAY'){
+        my $message = "";
+        my $nb_matched_queues = 0;
+        my $sum_metric_value = 0;
+        for my $queue (@$result){
+            next if $queue->{name} !~ /$filter/i;
+            my $value = 0;
+            $value = $queue->{$metric} if defined $queue->{$metric};
+            my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
+            push @values, $code;
+            
+            $nb_matched_queues++;
+            $sum_metric_value += $value;
+            
+            $p->add_message($code, sprintf("$queue->{name} : $metric ".$STATUS_TEXT{$code}." (%d)", $value)) unless $code == 0;
+        }
+        $p->add_perfdata(label=>$metric, value=>sprintf("%.4f", $sum_metric_value/$nb_matched_queues), warning=>$warning, critical=> $critical);
+    } else{
+        my $value = 0;
+        $value = $result->{$metric} if defined $result->{$metric};
+        my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
+        $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
+        $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
+    }
 }
+$p->add_message(0, sprintf("All queues under the thresholds")) unless grep {$_ > 0} @values;
 
 my ($code, $message) = $p->check_messages(join_all=>', ');
+
+$code = 1 if grep /1/,@values;
+$code = 2 if grep /2/,@values;
+
 $p->nagios_exit(return_code => $code, message => $message);
 
 
@@ -196,7 +232,7 @@ count the messages pending and consumers on a given queue
 
 =head1 SYNOPSIS
 
-check_rabbitmq_overview [options] -H hostname --queue queue
+check_rabbitmq_queue [options] -H hostname --queue queue
 
 =head1 DESCRIPTION
 
@@ -240,7 +276,7 @@ Use SSL when connecting (default: false)
 
 The user to connect as (default: guest)
 
-=item --pass
+=item --password | -p
 
 The password for the user (default: guest)
 
