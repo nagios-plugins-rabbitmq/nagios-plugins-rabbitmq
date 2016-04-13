@@ -20,7 +20,7 @@ $VERSION = '1.0';
 use File::Basename;
 $PROGNAME = basename($0);
 
-my $p = Monitoring::Plugin->new(
+my $p = Nagios::Plugin->new(
     usage => "Usage: %s [options] -H hostname --queue queue",
     license => "",
     version => $VERSION,
@@ -52,6 +52,11 @@ $p->add_arg(spec => 'vhost=s',
 $p->add_arg(spec => 'queue=s',
     help => "Specify the queue to check",
     required => 1
+);
+
+$p->add_arg(spec => 'exclude=s',
+    help => "Specify the queues to exclude from the check",
+    required => 0
 );
 
 
@@ -125,6 +130,7 @@ my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 my $vhost=uri_escape($p->opts->vhost);
 my $queue=$p->opts->queue;
+my $q_exclude=$p->opts->exclude;
 
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
@@ -141,27 +147,53 @@ if ($p->opts->ssl and $ua->can('ssl_opts')) {
     $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
 }
 
-my $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
+my $url = "";
+if ($queue eq "all"){
+    $url = sprintf("http%s://%s:%d/api/queues/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
+} else{
+    $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
+}
 my ($retcode, $result) = request($url);
 if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : $url");
 }
 
+my @values = ();
 my @metrics = ("messages", "messages_ready", "messages_unacknowledged", "consumers");
+
+my @q_exclude = ();
+@q_exclude = split /,/,$q_exclude if defined $q_exclude && $q_exclude ne "";
 for my $metric (@metrics) {
     my $warning = undef;
     $warning = $warning{$metric} if (defined $warning{$metric} and $warning{$metric} ne -1);
     my $critical = undef;
     $critical = $critical{$metric} if (defined $critical{$metric} and $critical{$metric} ne -1);
-
-    my $value = 0;
-    $value = $result->{$metric} if defined $result->{$metric};
-    my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
-    $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
-    $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
+    if(ref($result) eq 'ARRAY'){
+        my $message = "";
+        foreach my $queue (@$result){
+            my $q_name = $queue->{name};
+            next if grep {$_ eq $q_name } @q_exclude;
+            my $value = 0;
+            $value = $queue->{$metric} if defined $queue->{$metric};
+            my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
+            push @values, $code;
+            $p->add_message($code, sprintf("$q_name : $metric ".$STATUS_TEXT{$code}." (%d)", $value))  unless $code == 0;
+        }
+    } else{
+        my $value = 0;
+        $value = $result->{$metric} if defined $result->{$metric};
+        my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
+        $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
+        $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
+    }
 }
+$p->add_message(0, sprintf("All queues under the thresholds")) unless grep {$_ > 0} @values;
 
 my ($code, $message) = $p->check_messages(join_all=>', ');
+
+$code = 1 if grep /1/,@values;
+$code = 2 if grep /2/,@values;
+
 $p->nagios_exit(return_code => $code, message => $message);
 
 
@@ -206,7 +238,7 @@ published as performance metrics for the check.
 
 Critical and warning thresholds can be set for each of the metrics.
 
-It uses Monitoring::Plugin and accepts all standard Nagios options.
+It uses Nagios::Plugin and accepts all standard Nagios options.
 
 =head1 OPTIONS
 
@@ -298,7 +330,7 @@ signify WARNING, UNKNOWN or CRITICAL state.
 
 =head1 SEE ALSO
 
-See Monitoring::Plugin(3)
+See Nagios::Plugin(3)
 
 The RabbitMQ management plugin is described at
 http://www.rabbitmq.com/management.html

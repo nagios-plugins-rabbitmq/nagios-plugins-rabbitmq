@@ -51,7 +51,9 @@ Currently we have the following checks:
 
 - check\_rabbitmq\_queue
   - Use the `/api/queue` API to collect the number of pending, ready and
-    unacknowledged messages and the number of consumers on a given queue
+    unacknowledged messages and the number of consumers on a given queue or
+    all the queues available. Exclude parameter also works if all queues
+    are checked
 
 - check\_rabbitmq\_server
   - Use the `/api/nodes` API to gather resource usage of the rabbitmq server
