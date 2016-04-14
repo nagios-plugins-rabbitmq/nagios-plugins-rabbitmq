@@ -13,7 +13,7 @@ use URI::Escape;
 use JSON;
 
 use vars qw($VERSION $PROGNAME  $verbose $timeout);
-$VERSION = '1.0';
+$VERSION = '2.0.3';
 
 # get the base name of this script for use in the examples
 use File::Basename;
@@ -99,11 +99,11 @@ my $url = sprintf("http%s://%s:%d/api/nodes", ($p->opts->ssl ? "s" : ""), $hostn
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
 {
-        $ua->proxy('http', $p->opts->proxyurl);
+    $ua->proxy('http', $p->opts->proxyurl);
 }
 elsif($p->opts->proxy == 1 )
 {
-        $ua->env_proxy;
+    $ua->env_proxy;
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
