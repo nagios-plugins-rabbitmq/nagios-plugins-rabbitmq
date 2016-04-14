@@ -8,7 +8,7 @@ If you'd like to know the repository structure
 
 This repository is structured as follow:
 
-- **devel** - Default and development branch which use ``Monitoring::plugin`` . All pull request are merged on this branch and tested before any merging or backporting to other branches
+- **master** - Default and development branch which use ``Monitoring::plugin`` . All pull request are merged on this branch and tested before any merging or backporting to other branches
 - **libperl-monitoring-plugin** - Stable branche which use the perl ``Monitoring::plugin``
 - **libperl-nagios-plugin** - Stable branche which  use the perl ``Nagios::plugin``
 
