@@ -1,7 +1,7 @@
 nagios-plugins-rabbitmq
 =======================
 
-[![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html) &nbsp; [![Build Status](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg?branch=master)](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq) &nbsp; [![Join the chat at https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq](https://badges.gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg)](https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)&nbsp;[![Build Status](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg?branch=libperl-nagios-plugin)](https://travis-ci.org/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq)&nbsp;[![Join the chat at https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq](https://badges.gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq.svg)](https://gitter.im/nagios-plugins-rabbitmq/nagios-plugins-rabbitmq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Overview
 --------
@@ -12,14 +12,11 @@ HTTP and therefore have a very light profile on the nagios server.
 See the [documentation](http://www.rabbitmq.com/management.html) on the
 RabbitMQ management interface for more details on what it provides.
 
-NOTE:  RabbitMQ 2.x and RabbitMQ 3.x use different ports for the management
-interface. `master` is configured to use the RabbitMQ port by default (15672).
-If you are running RabbitMQ 2.x, use the `rabbitmq-2.x` branch.
-
 Branches
 --------
-- **master** use the perl Monitoring::plugin
-- **libperl-nagios-plugin** use the perl Nagios::plugin
+- **devel** - Default and development branch which use ``Monitoring::plugin`` . All pull request are merged on this branch and tested before any merging or backporting to other branches
+- **libperl-monitoring-plugin** - Stable branche which use the perl ``Monitoring::plugin``
+- **libperl-nagios-plugin** - Stable branche which  use the perl ``Nagios::plugin``
 
 NOTE: The perl Nagios::plugin is now deprecated and renamed into Monitoring::plugin. It's explained [here](http://search.cpan.org/~mstrout/Nagios-Plugin-0.990001/lib/Nagios/Plugin.pm).
 > Nagios::Plugin - Removed from CPAN by request of Nagios Enterprises, succeeded by Monitoring::Plugin
@@ -85,7 +82,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Author
-------
+Contributors
+------------
 
 James Casey <jamesc.000@gmail.com>, Thierno IB. BARRY [@barryib](https://github.com/barryib)
