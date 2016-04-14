@@ -39,3 +39,6 @@ script_stdout_like $regex, 'scripts/check_rabbitmq_server stdout is correct';
 
 # Checks on check_rabbitmq_watermark
 script_runs(['scripts/check_rabbitmq_watermark', ($args, "--node=${rabbit_servername}")]);
+
+# Checks on check_rabbitmq_exchange
+script_runs(['scripts/check_rabbitmq_exchange', ($args, '--exchange=amq.direct', '--period=60')]);

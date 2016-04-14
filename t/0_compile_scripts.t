@@ -12,3 +12,4 @@ script_compiles('scripts/check_rabbitmq_shovels');
 script_compiles('scripts/check_rabbitmq_server');
 script_compiles('scripts/check_rabbitmq_queue');
 script_compiles('scripts/check_rabbitmq_watermark');
+script_compiles('scripts/check_rabbitmq_exchange');

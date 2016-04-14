@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# check_rabbitmq_overview
+# check_rabbitmq_exchange
 #
 # Use the management APIs to check an exchange
 #
@@ -14,7 +14,7 @@ use URI::Escape;
 use JSON;
 
 use vars qw($VERSION $PROGNAME  $verbose $timeout);
-$VERSION = '1.0';
+$VERSION = '2.0.3';
 
 # get the base name of this script for use in the examples
 use File::Basename;
@@ -58,7 +58,6 @@ $p->add_arg(spec => 'period=s',
     help => "Specify the time period for which you want to check the thresholds",
     required => 1
 );
-
 
 $p->add_arg(
     spec => 'warning|w=s',
@@ -133,11 +132,11 @@ my $timePeriod=$p->opts->period;
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
 {
-        $ua->proxy('http', $p->opts->proxyurl);
+    $ua->proxy('http', $p->opts->proxyurl);
 }
 elsif($p->opts->proxy == 1 )
 {
-        $ua->env_proxy;
+    $ua->env_proxy;
 }
 $ua->agent($PROGNAME.' ');
 $ua->timeout($p->opts->timeout);
@@ -244,7 +243,7 @@ Use SSL when connecting (default: false)
 
 The user to connect as (default: guest)
 
-=item --pass
+=item -p | --password
 
 The password for the user (default: guest)
 
@@ -300,35 +299,28 @@ interface.
 Returns zero if check is OK otherwise returns standard Nagios exit codes to
 signify WARNING, UNKNOWN or CRITICAL state.
 
-=head1 SEE ALSO
+=head1 LICENSE
 
-+See Monitoring::Plugin(3)
-+
-+The RabbitMQ management plugin is described at
-+http://www.rabbitmq.com/management.html
-+
-+=head1 LICENSE
-+
-+This file is part of nagios-plugins-rabbitmq.
-+
-+Copyright 2010, Platform 14.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+   http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+
-+=head1 AUTHOR
-+
-+Maria Fernandez
-+
-+=cut
-+
-+1;
+This file is part of nagios-plugins-rabbitmq.
+
+Copyright 2010, Platform 14.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+=head1 AUTHOR
+
+Maria Fernandez
+
+=cut
+
+1;
