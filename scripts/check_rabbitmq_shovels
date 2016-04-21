@@ -52,9 +52,23 @@ sub run {
         help    => "Specify the password. Defaults to '%s'.",
         default => "guest",
     );
+    $np->add_arg(spec => 'password-from-file|f=s',
+        help => "Text file from which the password is being read",
+    );
+
 
     # parse options
     $np->getopts;
+
+    my $password = $np->opts->password;
+    if ( my $filename = $np->opts->get('password-from-file') ) {
+        open my $FH, '<', $filename
+            or die "Cannot open '$filename' for reading the password: $!";
+        $password = <$FH>;
+        chomp $password;
+        close $FH;
+    }
+
 
     # --------------------------------------
 
@@ -64,7 +78,7 @@ sub run {
     $json->allow_singlequote->allow_barekey;
 
     # construct the URL authority
-    my $url_authority = $np->opts->username . ":" . $np->opts->password
+    my $url_authority = $np->opts->username . ":" . $password
                       . '@' . $np->opts->hostname . ":" . $np->opts->port;
 
     # fetch the list of shovels
@@ -190,6 +204,11 @@ Print a more detailed help screen, then exit.
 =item B<-V>, B<--version>
 
 Print the program name and version, then exit.
+
+=item -f | --password-from-file
+
+The name of a file to read the password from.
+The password is read from the first line.
 
 =back
 
