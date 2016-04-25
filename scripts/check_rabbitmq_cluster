@@ -54,6 +54,10 @@ $p->add_arg(spec => 'password|p=s',
     default => "guest"
 );
 
+$p->add_arg(spec => 'password-from-file|f=s',
+    help => "Text file from which the password is being read",
+);
+
 $p->add_arg(spec => 'ssl|ssl!',
     help => "Use SSL (default: false)",
     default => 0
@@ -95,6 +99,16 @@ $p->getopts;
 my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
 
+my $password = $p->opts->password;
+if ( my $filename = $p->opts->get('password-from-file') ) {
+    open my $FH, '<', $filename
+        or die "Cannot open '$filename' for reading the password: $!";
+    $password = <$FH>;
+    chomp $password;
+    close $FH;
+}
+
+
 my $url = sprintf("http%s://%s:%d/api/nodes", ($p->opts->ssl ? "s" : ""), $hostname, $port);
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
@@ -111,7 +125,7 @@ if ($p->opts->ssl and $ua->can('ssl_opts')) {
     $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
 }
 my $req = HTTP::Request->new(GET => $url);
-$req->authorization_basic($p->opts->username, $p->opts->password);
+$req->authorization_basic($p->opts->username, $password);
 my $res = $ua->request($req);
 
 if (!$res->is_success) {
@@ -194,6 +208,11 @@ The user to connect as (default: guest)
 =item -p | --password
 
 The password for the user (default: guest)
+
+=item -f | --password-from-file
+
+The name of a file to read the password from.
+The password is read from the first line.
 
 =back
 

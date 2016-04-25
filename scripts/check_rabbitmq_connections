@@ -45,6 +45,10 @@ $p->add_arg(spec => 'password|p=s',
     default => "guest"
 );
 
+$p->add_arg(spec => 'password-from-file|f=s',
+    help => "Text file from which the password is being read",
+);
+
 $p->add_arg(
     spec => 'warning|w=s',
     help =>
@@ -88,6 +92,14 @@ $p->add_arg(spec => 'proxyurl=s',
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
+my $password = $p->opts->password;
+if ( my $filename = $p->opts->get('password-from-file') ) {
+    open my $FH, '<', $filename
+        or die "Cannot open '$filename' for reading the password: $!";
+    $password = <$FH>;
+    chomp $password;
+    close $FH;
+}
 
 # perform sanity checking on command line options
 my %warning;
@@ -176,7 +188,7 @@ $p->nagios_exit(return_code => $code, message => $message);
 sub request {
     my ($url) = @_;
     my $req = HTTP::Request->new(GET => $url);
-    $req->authorization_basic($p->opts->username, $p->opts->password);
+    $req->authorization_basic($p->opts->username, $password);
     my $res = $ua->request($req);
 
     if (!$res->is_success) {
@@ -252,6 +264,11 @@ The user to connect as (default: guest)
 =item -p | --password
 
 The password for the user (default: guest)
+
+=item -f | --password-from-file
+
+The name of a file to read the password from.
+The password is read from the first line.
 
 =item -w | --warning
 
