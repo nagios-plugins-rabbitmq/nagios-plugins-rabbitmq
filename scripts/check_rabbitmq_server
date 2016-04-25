@@ -188,7 +188,7 @@ sub check {
     my $warning = shift;
     my $critical = shift;
 
-    if (!$p || !$used) {
+    if (!$p || !defined($used)) {
       $p->nagios_exit( return_code=>CRITICAL, message=>'Unable to get values for '.$label);
     } else {
       my $value = percent($used, $limit);
