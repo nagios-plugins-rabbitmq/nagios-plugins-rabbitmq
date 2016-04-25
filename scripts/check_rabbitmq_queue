@@ -187,6 +187,8 @@ for my $metric (@metrics) {
         my $value = 0;
         $value = $result->{$metric} if defined $result->{$metric};
         my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
+        push @values, $code;
+        
         $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
         $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
     }
