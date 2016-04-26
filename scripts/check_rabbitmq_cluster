@@ -97,6 +97,7 @@ my $port=$p->opts->port;
 
 my $url = sprintf("http%s://%s:%d/api/nodes", ($p->opts->ssl ? "s" : ""), $hostname, $port);
 my $ua = LWP::UserAgent->new;
+
 if (defined $p->opts->proxyurl)
 {
     $ua->proxy('http', $p->opts->proxyurl);
@@ -110,40 +111,45 @@ $ua->timeout($p->opts->timeout);
 if ($p->opts->ssl and $ua->can('ssl_opts')) {
     $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
 }
-my $req = HTTP::Request->new(GET => $url);
-$req->authorization_basic($p->opts->username, $p->opts->password);
-my $res = $ua->request($req);
 
-if (!$res->is_success) {
-    # Deal with standard error conditions - make the messages more sensible
-    if ($res->code == 400) {
-        my $bodyref = decode_json $res->content;
-        $p->nagios_exit(CRITICAL, $bodyref->{'reason'});
-    }
-    $res->code == 404 and $p->nagios_die("Not found");
-    $res->code == 401 and $p->nagios_die("Access refused");
-    if ($res->code < 200 or $res->code > 400 ) {
-        $p->nagios_exit(CRITICAL, "Received ".$res->status_line);
-    }
+my ($retcode, $result) = request($url);
+if ($retcode != 200) {
+    $p->nagios_exit(CRITICAL, "$result : $url");
 }
 
-my @nodes = @{ decode_json $res->content };
-my $count = 0;
-foreach my $node ( @nodes ) {
+my @running_node = ();
+foreach my $node ( @$result ) {
   if ($node->{"name"} && $node->{"running"}) {
-    $count++;
+    push @running_node, $node->{"name"};
   }
 }
 
-if ($p->opts->critical && $count <= $p->opts->critical) {
-    $p->nagios_exit( CRITICAL, "The cluster has $count nodes" );
-}
+my code = $p->check_threshold(check => @running_node, $p->opts->warning => , critical=> $p->opts->critical);
+$p->nagios_exit(return_code => $code, message => "The cluster has $count nodes");
 
-if ($p->opts->warning && $count <= $p->opts->warning) {
-    $p->nagios_exit( WARNING, "The cluster has $count nodes" );
-}
+sub request {
+    my ($url) = @_;
+    my $req = HTTP::Request->new(GET => $url);
+    $req->authorization_basic($p->opts->username, $p->opts->password);
+    my $res = $ua->request($req);
 
-$p->nagios_exit( OK, "The cluster has $count nodes" );
+    if (!$res->is_success) {
+        # Deal with standard error conditions - make the messages more sensible
+        if ($res->code == 400) {
+            my $bodyref = decode_json $res->content;
+            return (400, $bodyref->{'reason'});
+
+        }
+        $res->code == 404 and return (404, "Not Found");
+        $res->code == 401 and return (401, "Access Refused");
+        $res->status_line =~ /Can\'t connect/ and return (500, "Connection Refused : $url");
+        if ($res->code < 200 or $res->code > 400 ) {
+            return ($res->code, "Received ".$res->status_line);
+        }
+    }
+    my $bodyref = decode_json $res->content;
+    return($res->code, $bodyref);
+}
 
 =head1 NAME
 
