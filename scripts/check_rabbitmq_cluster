@@ -280,7 +280,7 @@ is needed is to specify the host to connect to:
 
 This returns a standard Nagios result:
 
-    RABBITMQ_NODE OK - The cluster has 3 nodes
+    RABBITMQ_CLUSTER OK - The cluster has 3 nodes
 
 =head1 ERRORS
 
