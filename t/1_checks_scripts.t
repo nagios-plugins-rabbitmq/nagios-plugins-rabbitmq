@@ -13,9 +13,7 @@ $args = sprintf("--hostname=%s --username=%s --password=%s", $rabbit_hostname, $
 script_runs(['scripts/check_rabbitmq_aliveness', $args]);
 
 # Checks on check_rabbitmq_cluster
-$regex = /The cluster has \d+ nodes/im;
 script_runs(['scripts/check_rabbitmq_cluster', ($args, ' -w 1 -c 1')]);
-script_stdout_like $regex, 'scripts/check_rabbitmq_cluster stdout is correct';
 
 # Checks on check_rabbitmq_connections
 script_runs(['scripts/check_rabbitmq_connections', $args]);
