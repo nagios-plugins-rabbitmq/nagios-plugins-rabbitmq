@@ -187,9 +187,29 @@ The host to connect to
 
 The port to connect to (default: 15672)
 
+=item -u | --username | --user
+
+The user to connect as (default: guest)
+
+=item -p | --password
+
+The password for the user (default: guest)
+
 =item --ssl
 
 Use SSL when connecting (default: false)
+
+=item --ssl_strict
+
+When connecting in SSL, verify SSL certificat (default: true)
+
+=item --proxy
+
+Use the environment proxy variable (default: true)
+
+=item --proxyurl
+
+The proxy url to use. Somthing like http://proxy.domain.com:8080 or http://user:pass@proxy.domain.com:8080
 
 =item -n | --node
 
@@ -198,14 +218,6 @@ The node name (default is hostname)
 =item -r | --rname
 
 The rabbit name (default is rabbit)
-
-=item --username | --user
-
-The user to connect as (default: guest)
-
-=item -p | --password
-
-The password for the user (default: guest)
 
 =back
 

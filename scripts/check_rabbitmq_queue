@@ -59,7 +59,6 @@ $p->add_arg(spec => 'filter=s',
     default => ".*"
 );
 
-
 $p->add_arg(
     spec => 'warning|w=s',
     help =>
@@ -270,17 +269,38 @@ The host to connect to
 
 The port to connect to (default: 15672)
 
+=item -u | --username | --user
+
+The user to connect as (default: guest)
+
+=item -p | --password
+
+The password for the user (default: guest)
+
 =item --ssl
 
 Use SSL when connecting (default: false)
 
-=item --username | --user
+=item --ssl_strict
 
-The user to connect as (default: guest)
+When connecting in SSL, verify SSL certificat (default: true)
 
-=item --password | -p
+=item --proxy
 
-The password for the user (default: guest)
+Use the environment proxy variable (default: true)
+
+=item --proxyurl
+
+The proxy url to use. Somthing like http://proxy.domain.com:8080 or http://user:pass@proxy.domain.com:8080
+
+=item --queue
+
+Specify the queue to check (default: all).
+When "all" is defined as que name, the script checks all queues
+
+=item --filter
+
+Regular expression to filter queues (default: .*)
 
 =item -w | --warning
 
