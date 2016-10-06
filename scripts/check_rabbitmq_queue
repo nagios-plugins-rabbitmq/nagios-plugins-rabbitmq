@@ -95,6 +95,11 @@ $p->add_arg(spec => 'proxyurl=s',
     help => "Use proxy url like http://proxy.domain.com:8080",
 );
 
+$p->add_arg(spec => 'ignore|ignore!',
+    help => "Ignore alerts if queue does not exist (default: false)",
+    default => 0
+);
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
@@ -131,6 +136,7 @@ my $port=$p->opts->port;
 my $vhost=uri_escape($p->opts->vhost);
 my $queue=$p->opts->queue;
 my $filter=$p->opts->filter;
+my $ignore=$p->opts->ignore;
 
 my $ua = LWP::UserAgent->new;
 if (defined $p->opts->proxyurl)
@@ -154,6 +160,9 @@ if ($queue eq "all"){
     $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
 }
 my ($retcode, $result) = request($url);
+if ($retcode == 404 && $ignore) {
+    $p->nagios_exit(OK, "$result : $url");
+}
 if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : $url");
 }
@@ -295,6 +304,12 @@ The critical levels for each count of messages, messages_ready,
 messages_unacknowledged and consumers.  This field consists of
 one to four comma-separated thresholds.  Specify -1 if no threshold
 for a particular count.
+
+=item --ignore
+
+If the queue specified does not exist, this option ignores 
+CRITICAL alerts and returns a status of OK.  Useful for scenarios
+where queue existence is optional.
 
 =back
 
