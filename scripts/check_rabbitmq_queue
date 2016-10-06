@@ -95,8 +95,9 @@ $p->add_arg(spec => 'proxyurl=s',
     help => "Use proxy url like http://proxy.domain.com:8080",
 );
 
-$p->add_arg(spec => 'ignore',
-    help => "Ignore alerts if queue does not exist",
+$p->add_arg(spec => 'ignore|ignore!',
+    help => "Ignore alerts if queue does not exist (default: false)",
+    default => 0
 );
 
 # Parse arguments and process standard ones (e.g. usage, help, version)
