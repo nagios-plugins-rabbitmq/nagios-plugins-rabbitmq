@@ -11,6 +11,8 @@ use warnings;
 use Monitoring::Plugin;
 use LWP::UserAgent;
 use URI::Escape;
+use Monitoring::Plugin qw(OK CRITICAL WARNING UNKNOWN);
+use Monitoring::Plugin::Functions qw(%STATUS_TEXT);
 use JSON;
 
 use vars qw($VERSION $PROGNAME  $verbose $timeout);
@@ -63,11 +65,56 @@ $p->add_arg(spec => 'proxyurl=s',
     help => "Use proxy url like http://proxy.domain.com:8080",
 );
 
+# Argument to accept warning as an argument for each server objects
+$p->add_arg(
+    spec => 'warning|w=s',
+    help =>
+qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]]
+   Warning thresholds specified in order that the metrics are returned.
+   Specify -1 if no warning threshold.},
+
+);
+
+# Argument to accept critical as an argument for each server objects
+$p->add_arg(
+    spec => 'critical|c=s',
+    help =>
+qq{-c, --critical=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]]
+   Critical thresholds specified in order that the metrics are returned.
+   Specify -1 if no critical threshold.},
+);
+
+
 # Parse arguments and process standard ones (e.g. usage, help, version)
 $p->getopts;
 
 
 # perform sanity checking on command line options
+
+my %warning;
+if (defined $p->opts->warning) {
+    my @warning = split(',', $p->opts->warning);
+    $p->nagios_die("You should specify 1 to 5 ranges for --warning argument") unless $#warning < 5;
+
+    $warning{'vhost'} = shift @warning;
+    $warning{'exchange'} = shift @warning;
+    $warning{'binding'} = shift @warning;
+    $warning{'queue'} = shift @warning;
+    $warning{'channel'} = shift @warning;
+}
+
+
+my %critical;
+if (defined $p->opts->critical) {
+    my @critical = split(',', $p->opts->critical);
+    $p->nagios_die("You should specify specify 1 to 5 ranges for --critical argument") unless $#critical < 5;
+
+    $critical{'vhost'} = shift @critical;
+    $critical{'exchange'} = shift @critical;
+    $critical{'binding'} = shift @critical;
+    $critical{'queue'} = shift @critical;
+    $critical{'channel'} = shift @critical;
+}
 
 
 ##############################################################################
@@ -91,8 +138,20 @@ if ($p->opts->ssl and $ua->can('ssl_opts')) {
     $ua->ssl_opts(verify_hostname => $p->opts->ssl_strict);
 }
 
+my $values = {};
+$values->{'vhost'} = 0;
+$values->{'exchange'} = 0;
+$values->{'binding'} = 0;
+$values->{'queue'} = 0;
+$values->{'channel'} = 0;
+
+
 my @calls = ("vhost", "exchange", "binding", "queue", "channel");
 for my $call (@calls) {
+    my $warning_value = undef;
+    $warning_value = $warning{$call} if (defined $warning{$call} and $warning{$call} ne -1);
+    my $critical_value = undef;
+    $critical_value = $critical{$call} if (defined $critical{$call} and $critical{$call} ne -1);
     my $url = sprintf("http%s://%s:%d/api/%ss", ($p->opts->ssl ? "s" : ""), $hostname, $port, $call);
     my ($code, $result) = request($url);
     if ($code != 200) {
@@ -101,12 +160,17 @@ for my $call (@calls) {
     # we're always returned a list - count it
     my $count = $#{$result};
     $count = 0 if $count == -1;
-    $p->add_message(OK, sprintf("$call (%.2f%%)", $count)) ;
-    $p->add_perfdata(label=>$call, value => $count);
+    my $values_result = $p->check_threshold(check => $count, warning => $warning_value, critical=> $critical_value);
+    $p->add_message($values_result, sprintf("$call ".$STATUS_TEXT{$values_result}." (%d)", $count)) ;
+    $p->add_perfdata(label=>$call, value => $count,warning=>$warning_value, critical=> $critical_value);
+    #$p->add_message(OK, sprintf("$call (%.2f%%)", $count)) ;
+    #$p->add_perfdata(label=>$call, value => $count);
 
 }
 
-$p->nagios_exit(return_code => OK, message => "Gathered Object Counts");
+my ($values_result, $message) = $p->check_messages(join_all=>', ');
+$p->nagios_exit(return_code => $values_result, message => "Gathered Object Counts");
+#$p->nagios_exit(return_code => OK, message => "Gathered Object Counts");
 
 sub request {
     my ($url) = @_;
