@@ -64,7 +64,8 @@ $p->add_arg(
     spec => 'warning|w=s',
     help =>
 qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
-   Warning thresholds specified in order that the metrics are returned.
+   Warning thresholds specified in following order:
+   messages[,messages_ready[,messages_unacknowledged[,consumers]]]
    Specify -1 if no warning threshold.},
 
 );
@@ -73,7 +74,8 @@ $p->add_arg(
     spec => 'critical|c=s',
     help =>
 qq{-c, --critical=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
-   Critical thresholds specified in order that the metrics are returned.
+   Critical thresholds specified in following order:
+   messages[,messages_ready[,messages_unacknowledged[,consumers]]]
    Specify -1 if no critical threshold.},
 );
 
