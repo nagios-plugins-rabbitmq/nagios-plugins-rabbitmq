@@ -2,7 +2,7 @@
 #
 # check_rabbitmq_cluster
 #
-# Use the management API to check how many node are alived in the cluster.
+# Use the management API to check how many node are alive in the cluster.
 
 use strict;
 use warnings;
@@ -221,7 +221,7 @@ sub diff {
 
 =head1 NAME
 
-check_rabbitmq_cluster - Nagios plugin using RabbitMQ management API to check how many node are alived in the cluster
+check_rabbitmq_cluster - Nagios plugin using RabbitMQ management API to check how many node are alive in the cluster
 
 =head1 SYNOPSIS
 
@@ -229,7 +229,7 @@ check_rabbitmq_cluster [options] -H hostname
 
 =head1 DESCRIPTION
 
-Use the management interface of RabbitMQ to check if a cluster partition has occured.
+Use the `/api/nodes` API to check how many node are alive in the cluster.
 
 It uses Monitoring::Plugin and accepts all standard Nagios options.
 
