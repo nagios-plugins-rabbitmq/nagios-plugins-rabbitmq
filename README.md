@@ -5,8 +5,8 @@ nagios-plugins-rabbitmq
 Overview
 --------
 This package contains a set of nagios checks useful for monitoring a
-RabbitMQ server. They use the RabbitMQ management interface with is over
-HTTP and therefore have a very light profile on the nagios server.
+RabbitMQ server. They use the RabbitMQ management interface over HTTP
+and therefore have a very light profile on the Nagios server.
 
 See the [documentation](http://www.rabbitmq.com/management.html) on the
 RabbitMQ management interface for more details on what it provides.
@@ -48,7 +48,7 @@ Currently we have the following checks:
   - Use the `/api/nodes` API to check for partitions in a RabbitMQ cluster.
 
 - check\_rabbitmq\_cluster
-  - Use the `/api/nodes` API to check how many node are alived in the cluster.
+  - Use the `/api/nodes` API to check how many node are alive in the cluster.
 
 - check\_rabbitmq\_queue
   - Use the `/api/queue` API to collect the number of pending, ready and
