@@ -124,7 +124,7 @@ my $nodename = $p->opts->node;
 my $rname = $p->opts->rname;
 
 if (!$nodename) {
-    $hostname =~ /^([a-zA-Z0-9-]*)/;
+    $hostname =~ /^([\.a-Z0-9-]*)/;
     $nodename = $1;
 }
 
