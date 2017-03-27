@@ -63,9 +63,9 @@ $p->add_arg(spec => 'filter=s',
 $p->add_arg(
     spec => 'warning|w=s',
     help =>
-qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
+qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]]
    Warning thresholds specified in following order:
-   messages[,messages_ready[,messages_unacknowledged[,consumers]]]
+   messages[,messages_ready[,messages_unacknowledged[,consumers[,head_message_timestamp]]]]
    Specify -1 if no warning threshold.},
 
 );
@@ -73,9 +73,9 @@ qq{-w, --warning=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
 $p->add_arg(
     spec => 'critical|c=s',
     help =>
-qq{-c, --critical=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]
+qq{-c, --critical=THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD[,THRESHOLD]]]]
    Critical thresholds specified in following order:
-   messages[,messages_ready[,messages_unacknowledged[,consumers]]]
+   messages[,messages_ready[,messages_unacknowledged[,consumers[,head_message_timestamp]]]]
    Specify -1 if no critical threshold.},
 );
 
@@ -110,23 +110,25 @@ $p->getopts;
 my %warning;
 if (defined $p->opts->warning) {
     my @warning = split(',', $p->opts->warning);
-    $p->nagios_die("You should specify 1 to 4 ranges for --warning argument") unless $#warning < 4;
+    $p->nagios_die("You should specify 1 to 5 ranges for --warning argument") unless $#warning < 5;
 
     $warning{'messages'} = shift @warning;
     $warning{'messages_ready'} = shift @warning;
     $warning{'messages_unacknowledged'} = shift @warning;
     $warning{'consumers'} = shift @warning;
+    $warning{'head_message_timestamp'} = shift @warning;
 }
 
 my %critical;
 if (defined $p->opts->critical) {
     my @critical = split(',', $p->opts->critical);
-    $p->nagios_die("You should specify specify 1 to 4 ranges for --critical argument") unless $#critical < 4;
+    $p->nagios_die("You should specify specify 1 to 5 ranges for --critical argument") unless $#critical < 5;
 
     $critical{'messages'} = shift @critical;
     $critical{'messages_ready'} = shift @critical;
     $critical{'messages_unacknowledged'} = shift @critical;
     $critical{'consumers'} = shift @critical;
+    $critical{'head_message_timestamp'} = shift @critical;
 }
 
 
@@ -170,7 +172,7 @@ if ($retcode != 200) {
 }
 
 my @values = ();
-my @metrics = ("messages", "messages_ready", "messages_unacknowledged", "consumers");
+my @metrics = ("messages", "messages_ready", "messages_unacknowledged", "consumers", "head_message_timestamp");
 
 for my $metric (@metrics) {
     my $warning = undef;
@@ -184,7 +186,10 @@ for my $metric (@metrics) {
         for my $queue (@$result){
             next if $queue->{name} !~ /$filter/i;
             my $value = 0;
-            $value = $queue->{$metric} if defined $queue->{$metric};
+            if (defined $queue->{$metric} and $queue->{$metric} ne "null") {
+                $value = ($metric eq "head_message_timestamp") ? $value = time - $queue->{$metric} : $queue->{$metric};
+            }
+
             my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
             push @values, $code;
             
@@ -196,7 +201,10 @@ for my $metric (@metrics) {
         $p->add_perfdata(label=>$metric, value=>sprintf("%.4f", $sum_metric_value/$nb_matched_queues), warning=>$warning, critical=> $critical);
     } else{
         my $value = 0;
-        $value = $result->{$metric} if defined $result->{$metric};
+        if (defined $result->{$metric} and $result->{$metric} ne "null") {
+            $value = ($metric eq "head_message_timestamp") ? $value = time - $result->{$metric} : $result->{$metric};
+        }
+
         my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
         push @values, $code;
         
@@ -296,14 +304,14 @@ The password for the user (default: guest)
 =item -w | --warning
 
 The warning levels for each count of messages, messages_ready,
-messages_unacknowledged and consumers.  This field consists of
+messages_unacknowledged, consumers and head_message_timestamp.  This field consists of
 one to four comma-separated thresholds.  Specify -1 if no threshold
 for a particular count.
 
 =item -c | --critical
 
 The critical levels for each count of messages, messages_ready,
-messages_unacknowledged and consumers.  This field consists of
+messages_unacknowledged, consumers and head_message_timestamp.  This field consists of
 one to four comma-separated thresholds.  Specify -1 if no threshold
 for a particular count.
 
