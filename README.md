@@ -56,6 +56,9 @@ Currently we have the following checks:
     all the queues available. Exclude parameter also works if all queues
     are checked
 
+- check\_rabbitmq\_queues
+  - Use the `/api/queues` API to gather the number of queues and their state.
+
 - check\_rabbitmq\_server
   - Use the `/api/nodes` API to gather resource usage of the rabbitmq server
     node
