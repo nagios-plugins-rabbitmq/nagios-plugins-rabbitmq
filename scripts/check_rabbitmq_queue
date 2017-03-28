@@ -304,14 +304,14 @@ The password for the user (default: guest)
 =item -w | --warning
 
 The warning levels for each count of messages, messages_ready,
-messages_unacknowledged, consumers and head_message_timestamp.  This field consists of
+messages_unacknowledged, consumers and head_message_timestamp in seconds.  This field consists of
 one to four comma-separated thresholds.  Specify -1 if no threshold
 for a particular count.
 
 =item -c | --critical
 
 The critical levels for each count of messages, messages_ready,
-messages_unacknowledged, consumers and head_message_timestamp.  This field consists of
+messages_unacknowledged, consumers and head_message_timestamp in seconds.  This field consists of
 one to four comma-separated thresholds.  Specify -1 if no threshold
 for a particular count.
 
