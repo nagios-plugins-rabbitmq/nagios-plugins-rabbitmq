@@ -216,7 +216,7 @@ sub request {
 
 sub diff {
     my ($array_1, $array_2) = (@_);
-    return grep { my $baz = $_; grep($_ ne $baz, @$array_2) } @$array_1;
+    return grep { my $baz = $_; !grep{$_ eq $baz} @$array_2; } @$array_1;
 }
 
 =head1 NAME
