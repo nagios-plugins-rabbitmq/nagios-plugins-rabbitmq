@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 #
-# check_rabbitmq_overview
+# check_rabbitmq_queue
 #
 # Use the management APIs to check a queue
-#
+
 use strict;
 use warnings;
 
@@ -187,10 +187,10 @@ for my $metric (@metrics) {
             $value = $queue->{$metric} if defined $queue->{$metric};
             my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
             push @values, $code;
-            
+
             $nb_matched_queues++;
             $sum_metric_value += $value;
-            
+
             $p->add_message($code, sprintf("$queue->{name} : $metric ".$STATUS_TEXT{$code}." (%d)", $value)) unless $code == 0;
         }
         $p->add_perfdata(label=>$metric, value=>sprintf("%.4f", $sum_metric_value/$nb_matched_queues), warning=>$warning, critical=> $critical);
@@ -199,7 +199,7 @@ for my $metric (@metrics) {
         $value = $result->{$metric} if defined $result->{$metric};
         my $code = $p->check_threshold(check => $value, warning => $warning, critical=> $critical);
         push @values, $code;
-        
+
         $p->add_message($code, sprintf("$metric ".$STATUS_TEXT{$code}." (%d)", $value)) ;
         $p->add_perfdata(label=>$metric, value => $value, warning=>$warning, critical=> $critical);
     }
@@ -309,7 +309,7 @@ for a particular count.
 
 =item --ignore
 
-If the queue specified does not exist, this option ignores 
+If the queue specified does not exist, this option ignores
 CRITICAL alerts and returns a status of OK.  Useful for scenarios
 where queue existence is optional.
 

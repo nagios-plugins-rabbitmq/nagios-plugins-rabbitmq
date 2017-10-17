@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
-
-###  check_rabbitmq_aliveness.pl
-
+#
+#  check_rabbitmq_server
+#
 # Use the management overview to check server statistics
 
 ##############################################################################
