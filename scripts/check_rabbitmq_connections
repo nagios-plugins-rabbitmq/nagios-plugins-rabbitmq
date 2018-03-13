@@ -149,9 +149,9 @@ $values->{'send_rate'} = 0;
 for my $connection (@$result) {
     if (not defined($p->opts->clientuser) or $p->opts->clientuser eq $connection->{"user"}) {
         $values->{'connections'}++;
-        $values->{'connections_notrunning'}++ if $connection->{"state"} ne "running";
-        $values->{'receive_rate'} += $connection->{"recv_oct_details"}->{"rate"};
-        $values->{'send_rate'} += $connection->{"send_oct_details"}->{"rate"};
+        $values->{'connections_notrunning'}++ if ((not defined $connection->{"state"}) || ($connection->{"state"} ne "running"));
+        $values->{'receive_rate'} += $connection->{"recv_oct_details"}->{"rate"} if (defined $connection->{"recv_oct_details"}->{"rate"});
+        $values->{'send_rate'} += $connection->{"send_oct_details"}->{"rate"} if (defined $connection->{"send_oct_details"}->{"rate"});
     }
 }
 
