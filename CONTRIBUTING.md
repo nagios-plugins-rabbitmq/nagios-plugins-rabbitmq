@@ -3,33 +3,39 @@ Contributing to nagios-plugins-rabbitmq
 
 The Nagios plugins for RabbitMQ are written and maintained by the community, according to the following contribution guidelines.
 
-If you'd like to know the repository structure
-----------------------------------------------
+Repository structure
+--------------------
 
-This repository is structured as follow:
+-	**master** - Default and development branch which uses `Monitoring::plugin` . All pull request are merged into this branch and are tested before any merging or backporting to other branches occurs
+-	**libperl-monitoring-plugin** - Stable branch which uses the perl `Monitoring::plugin`
+-	**libperl-nagios-plugin** - Stable branch which uses the perl `Nagios::plugin`
 
-- **master** - Default and development branch which use ``Monitoring::plugin`` . All pull request are merged on this branch and tested before any merging or backporting to other branches
-- **libperl-monitoring-plugin** - Stable branche which use the perl ``Monitoring::plugin``
-- **libperl-nagios-plugin** - Stable branche which  use the perl ``Nagios::plugin``
+NOTE: Please Make sure you get the latest **master** branch before any contributions.
 
-NOTE:  Make sure you get the latest **devel** branch before any contributions.
+Contributing code to an existing script
+---------------------------------------
 
-If you'd like to contribute code to an existing script
-------------------------------------------------------
+Fork the project on GitHub.
 
-Get the latest devel branch, code your stuff and make a PR.
+Making use of your new copy, pull the latest master branch and edit the code.
 
-If you'd like to contribute code to a new script
-------------------------------------------------
+Commit your changes and create a pull request from the original repository.
 
-Get the latest devel branch, code your stuff and make a PR.
+Contributing code to a new script
+---------------------------------
 
-Tests are not mandatory for a PR for new scripts, but are very appreciated.
+Fork the project on GitHub.
 
-NOTE:  New scripts should be tested by travis before to be added to stable branches.
+Making use of your new copy, pull the latest master branch and create your new script.
 
-If you'd like to ask a question
--------------------------------
+Commit your changes and create a pull request from the original repository.
+
+Tests are not mandatory for a pull request for new scripts however they are very much appreciated and encouraged.
+
+NOTE: New scripts should be tested by travis before being added to stable branches.
+
+Question?
+---------
 
 Please use the [nagios-plugins-rabbitmq's gitter channels](https://gitter.im/orgs/nagios-plugins-rabbitmq/rooms) to ask a question to the community.
 

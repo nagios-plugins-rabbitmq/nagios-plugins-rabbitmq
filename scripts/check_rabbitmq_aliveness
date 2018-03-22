@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-
-###  check_rabbitmq_aliveness.pl
-
+#
+#  check_rabbitmq_aliveness
+#
 # Use the management aliveness-check to send/receive a message through a vhost
-
+#
 # Originally by Nathan Vonnahme, n8v at users dot sourceforge
 # dot net, July 19 2006
 

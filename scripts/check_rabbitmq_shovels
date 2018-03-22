@@ -1,4 +1,9 @@
 #!/usr/bin/perl -w
+#
+#  check_rabbitmq_shovels
+#
+# Use the management overview to check server shovels
+
 use strict;
 use warnings;
 use JSON -support_by_pp;
@@ -196,7 +201,7 @@ Print the program name and version, then exit.
 
 =head1 DESCRIPTION
 
-This program is a Nagios plugin that uses the JSON over HTTP API 
+This program is a Nagios plugin that uses the JSON over HTTP API
 to check that all shovels of the given RabbitMQ host are running.
 The default settings match the standard installation of RabbitMQ.
 
@@ -258,4 +263,3 @@ limitations under the License.
 =head1 AUTHOR
 
 Sebastien Aperghis-Tramoni (sebastien@aperghis.net)
-
