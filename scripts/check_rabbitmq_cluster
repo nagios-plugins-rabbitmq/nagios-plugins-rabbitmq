@@ -144,12 +144,15 @@ my ($retcode, $result) = request($url);
 if ($retcode != 200) {
     $p->nagios_exit(CRITICAL, "$result : $url");
 }
-
 my $values = {};
 $values->{'running_nodes'} = ();
 $values->{'nb_running_node'} = 0;
 $values->{'nb_running_disc_node'} = 0;
 $values->{'nb_running_ram_node'} = 0;
+$values->{'not_running_nodes'} = ();
+$values->{'not_nb_running_node'} = 0;
+$values->{'not_nb_running_disc_node'} = 0;
+$values->{'not_nb_running_ram_node'} = 0;
 
 foreach my $node ( @$result ) {
     if ($node->{"name"} && $node->{"running"}) {
@@ -159,12 +162,22 @@ foreach my $node ( @$result ) {
         $values->{'nb_running_disc_node'}++ if ($node->{"type"} && $node->{"type"} eq "disc");
         $values->{'nb_running_ram_node'}++ if ($node->{"type"} && $node->{"type"} eq "ram");
     }
+    elsif ($node->{"name"} && not $node->{"running"}) {
+        push @{ $values->{'not_running_nodes'} }, $node->{"name"};
+
+        $values->{'not_nb_running_node'}++;
+        $values->{'not_nb_running_disc_node'}++ if ($node->{"type"} && $node->{"type"} eq "disc");
+        $values->{'not_nb_running_ram_node'}++ if ($node->{"type"} && $node->{"type"} eq "ram");
+    }
 }
 
 my $code = 0;
 my $message = "";
-
-if (defined($p->opts->nodes)) {
+if (defined($p->opts->nodes) && $p->opts->nodes eq 'ALL') {
+    ($code, $message) = (OK, "All nodes are running");
+    ($code, $message) = (CRITICAL, "$values->{'not_nb_running_node'} failed cluster node(s): ".  join(',', @{ $values->{'not_running_nodes'}} )."." ) if($values->{'not_nb_running_node'} ne 0);
+}
+elsif (defined($p->opts->nodes)) {
     my @nodes = split(',', $p->opts->nodes);
     my @excluded_nodes = diff(\@nodes, \@{ $values->{'running_nodes'} });
     my $nb_excluded_nodes = @excluded_nodes;
@@ -195,7 +208,7 @@ sub request {
     my $req = HTTP::Request->new(GET => $url);
     $req->authorization_basic($p->opts->username, $p->opts->password);
     my $res = $ua->request($req);
-
+    
     if (!$res->is_success) {
         # Deal with standard error conditions - make the messages more sensible
         if ($res->code == 400) {
