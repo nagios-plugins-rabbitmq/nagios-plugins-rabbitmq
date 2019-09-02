@@ -92,8 +92,11 @@ if ($p->opts->ssl and $ua->can('ssl_opts')) {
 }
 
 my @calls = ("vhost", "exchange", "binding", "queue", "channel");
+my %col = ("binding" => "vhost", "*" => "name");
+
 for my $call (@calls) {
-    my $url = sprintf("http%s://%s:%d/api/%ss", ($p->opts->ssl ? "s" : ""), $hostname, $port, $call);
+    my $url = sprintf("http%s://%s:%d/api/%ss?columns=%s",
+                      ($p->opts->ssl ? "s" : ""), $hostname, $port, $call, $col{$call} || $col{'*'});
     my ($code, $result) = request($url);
     if ($code != 200) {
         $p->nagios_exit(CRITICAL, "$result : /api/". $call."s");
