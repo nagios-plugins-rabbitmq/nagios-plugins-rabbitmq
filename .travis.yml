@@ -8,8 +8,9 @@ perl:
   - "5.14"
 
 addons:
-  hosts:
-    - rabbit
+ apt:
+  packages:
+  - rabbit
 
 services:
   - rabbitmq
@@ -24,7 +25,7 @@ env:
     - RABBIT_HOSTNAME=127.0.0.1
     - RABBIT_USERNAME=guest
     - RABBIT_PASSWORD=guest
-    - RABBIT_SERVERNAME="localhost"
+    - RABBIT_SERVERNAME=$(sudo hostname)
     - RABBIT_1_RNAME=rabbit
     - RABBIT_1_MGT_PORT=15672
 
