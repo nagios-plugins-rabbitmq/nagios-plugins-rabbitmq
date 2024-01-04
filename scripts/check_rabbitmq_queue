@@ -14,7 +14,7 @@ use URI::Escape;
 use JSON;
 
 use vars qw($VERSION $PROGNAME  $verbose $timeout);
-$VERSION = '2.0.3';
+$VERSION = '2.0.4';
 
 # get the base name of this script for use in the examples
 use File::Basename;
@@ -135,7 +135,8 @@ if (defined $p->opts->critical) {
 
 my $hostname=$p->opts->hostname;
 my $port=$p->opts->port;
-my $vhost=uri_escape($p->opts->vhost);
+my $vhost='/';
+$vhost.=uri_escape($p->opts->vhost) if $p->opts->vhost ne "/";
 my $queue=$p->opts->queue;
 my $filter=$p->opts->filter;
 my $ignore=$p->opts->ignore;
@@ -157,9 +158,9 @@ if ($p->opts->ssl and $ua->can('ssl_opts')) {
 
 my $url = "";
 if ($queue eq "all"){
-    $url = sprintf("http%s://%s:%d/api/queues/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
+    $url = sprintf("http%s://%s:%d/api/queues%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost);
 } else{
-    $url = sprintf("http%s://%s:%d/api/queues/%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
+    $url = sprintf("http%s://%s:%d/api/queues%s/%s", ($p->opts->ssl ? "s" : ""), $hostname, $port, $vhost, $queue);
 }
 my ($retcode, $result) = request($url);
 if ($retcode == 404 && $ignore) {
